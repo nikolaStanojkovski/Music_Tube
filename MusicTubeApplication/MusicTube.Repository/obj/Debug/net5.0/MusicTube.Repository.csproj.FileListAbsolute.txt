@@ -1,0 +1,15 @@
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\MusicTube.Repository.deps.json
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\MusicTube.Repository.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\ref\MusicTube.Repository.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\MusicTube.Repository.pdb
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\MusicTube.Domain.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\bin\Debug\net5.0\MusicTube.Domain.pdb
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.csproj.AssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.AssemblyInfoInputs.cache
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.AssemblyInfo.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.csproj.CoreCompileInputs.cache
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.csproj.CopyComplete
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\ref\MusicTube.Repository.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTube.Repository\obj\Debug\net5.0\MusicTube.Repository.pdb
