@@ -10,12 +10,6 @@ namespace MusicTube.Domain.Domain
     public class Song : Media
     {
         [Required]
-        public Int64 Length { get; set; } // in seconds
-        [Required]
-        public Int64 AudioQuality { get; set; } // in kbps
-        [Required]
-        public Int64 AudioSampleRate { get; set; } // in kHz
-        [Required]
         public String AudioURL { get; set; }
 
         public Guid AlbumId { get; set; }

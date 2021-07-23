@@ -64,7 +64,6 @@ namespace MusicTube.Web.Controllers
                     songToUpload.CopyTo(fileStream);
                     fileStream.Flush();
                 }
-                // Mp3FileReader reader = new Mp3FileReader(pathToUpload);
 
                 songService.CreateNewSong(user, song, pathToUpload);
 
