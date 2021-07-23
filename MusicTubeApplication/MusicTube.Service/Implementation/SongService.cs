@@ -15,10 +15,10 @@ namespace MusicTube.Service.Implementation
     public class SongService : ISongService
     {
         private readonly IUserRepository userRepository;
-        private readonly IRepository<Song> songRepository;
+        private readonly ISongRepository songRepository;
         private readonly IRepository<Album> albumRepository;
 
-        public SongService(IRepository<Song> _songRepository,
+        public SongService(ISongRepository _songRepository,
             IRepository<Album> _albumRepository,
             IUserRepository _userRepository)
         {
@@ -29,7 +29,7 @@ namespace MusicTube.Service.Implementation
 
         public List<Song> GetAllSongs()
         {
-            return songRepository.ReadAll();
+            return songRepository.ReadAllSongs();
         }
 
         public SongDto GetSongDto(Creator user)
@@ -50,34 +50,59 @@ namespace MusicTube.Service.Implementation
 
         public Song CreateNewSong(Creator user, SongDto song, string songURL)
         {
-            Album album = new Album();
-            if (song.AlbumId != null)
+            Album album = null;
+            Song songToCreate;
+            if (song.AlbumId != Guid.Empty)
+            {
                 album = albumRepository.Read(song.AlbumId);
 
-            Song songToCreate = new Song
+                songToCreate = new Song
+                {
+                    Id = Guid.NewGuid(),
+
+                    // Media Specific
+                    Name = song.Name,
+                    Description = song.Description,
+                    Label = song.Label,
+                    Genre = song.Genre,
+                    Creator = user,
+                    CreatorId = user.Id,
+                    Feedbacks = new List<UserFeedback>(),
+                    Reviews = new List<Review>(),
+
+                    // Song specific
+
+                    AudioURL = songURL,
+
+                    Album = album,
+                    AlbumId = song.AlbumId,
+                    VideosAppearedIn = new List<Video>()
+                };
+            } else
             {
-                Id = Guid.NewGuid(),
+                songToCreate = new Song
+                {
+                    Id = Guid.NewGuid(),
 
-                // Media Specific
-                Name = song.Name,
-                Description = song.Description,
-                Label = song.Label,
-                Genre = song.Genre,
-                Creator = user,
-                CreatorId = user.Id,
-                Feedbacks = new List<UserFeedback>(),
-                Reviews = new List<Review>(),
+                    // Media Specific
+                    Name = song.Name,
+                    Description = song.Description,
+                    Label = song.Label,
+                    Genre = song.Genre,
+                    Creator = user,
+                    CreatorId = user.Id,
+                    Feedbacks = new List<UserFeedback>(),
+                    Reviews = new List<Review>(),
 
-                // Song specific
+                    // Song specific
 
-                AudioURL = song.AudioURL,
+                    AudioURL = songURL,
 
-                Album = album,
-                AlbumId = song.AlbumId,
-                VideosAppearedIn = new List<Video>()
-            };
+                    VideosAppearedIn = new List<Video>()
+                };
+            }
 
-            songRepository.Create(songToCreate);
+            songRepository.CreateSong(songToCreate);
             userRepository.UpdateUser(user);
 
             return songToCreate;

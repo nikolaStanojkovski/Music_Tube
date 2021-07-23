@@ -108,5 +108,67 @@ namespace MusicTube.Service.Implementation
                 AllCreators = chosenCreators
             };
         }
+
+        public UserSettingsDto GetUserSettings(MusicTubeUser user)
+        {
+            UserSettingsDto model = new UserSettingsDto();
+            if (user.GetType().Name.Equals("Creator"))
+            {
+                user = userRepository.ReadCreatorInformation(user.Id);
+                model = new UserSettingsDto()
+                {
+                    Mail = user.Email,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    ImageURL = user.ImageURL,
+                    NewsletterSubscribed = user.NewsletterSubscribed,
+                    FavouriteGenre = user.FavouriteGenre,
+                    FavouriteArtist = user.FavouriteArtist,
+
+                    ArtistName = ((Creator)user).ArtistName,
+                    ArtistDescription = ((Creator)user).ArtistDescription,
+                    PremiumPlan = ((Creator)user).PremiumPlan,
+                    Fans = ((Creator)user).Fans,
+                    Content = ((Creator)user).Content,
+                    Reviews = null
+                };
+            } else
+            {
+                user = userRepository.ReadUserInformation(user.Id);
+                model = new UserSettingsDto()
+                {
+                    Mail = user.Email,
+                    Name = user.Name,
+                    Surname = user.Surname,
+                    ImageURL = user.ImageURL,
+                    NewsletterSubscribed = user.NewsletterSubscribed,
+                    FavouriteGenre = user.FavouriteGenre,
+                    FavouriteArtist = user.FavouriteArtist,
+
+                    ArtistName = null,
+                    ArtistDescription = null,
+                    PremiumPlan = null,
+                    Fans = null,
+                    Content = null,
+                    Reviews = ((Listener)user).Reviews
+                };
+            }
+
+            return model;
+        }
+
+        public void UpdateUserPersonalInformation(MusicTubeUser user, UserSettingsDto model)
+        {
+            if (model.Name != null && !model.Name.Equals(""))
+                user.Name = model.Name;
+
+            if (model.Surname != null && !model.Surname.Equals(""))
+                user.Surname = model.Surname;
+
+            if (model.ImageURL != null && !model.ImageURL.Equals(""))
+                user.ImageURL = model.ImageURL;
+
+            userRepository.UpdateUser(user);
+        }
     }
 }

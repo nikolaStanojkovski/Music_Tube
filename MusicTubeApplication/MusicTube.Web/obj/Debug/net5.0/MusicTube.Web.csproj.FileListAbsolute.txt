@@ -848,3 +848,4 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Edit.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Index.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.csproj.AssemblyReference.cache
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Account\Settings.cshtml.g.cs

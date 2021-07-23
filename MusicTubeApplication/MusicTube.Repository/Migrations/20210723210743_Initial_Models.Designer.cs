@@ -10,7 +10,7 @@ using MusicTube.Repository;
 namespace MusicTube.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210723200149_Initial_Models")]
+    [Migration("20210723210743_Initial_Models")]
     partial class Initial_Models
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

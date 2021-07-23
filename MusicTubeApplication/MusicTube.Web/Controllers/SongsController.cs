@@ -50,14 +50,13 @@ namespace MusicTube.Web.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Label,AlbumId,Description,Genre")] SongDto song, IFormFile songToUpload)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && songToUpload != null)
             {
                 var user = (Creator) await userManager.FindByEmailAsync(User.Identity.Name);
 
-                var fileName = songToUpload.FileName + ".mp3";
+                var fileName = songToUpload.FileName;
                 string pathToUpload = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\files\\audio\\{fileName}";
                 using (FileStream fileStream = System.IO.File.Create(pathToUpload))
                 {
@@ -65,7 +64,7 @@ namespace MusicTube.Web.Controllers
                     fileStream.Flush();
                 }
 
-                songService.CreateNewSong(user, song, pathToUpload);
+                songService.CreateNewSong(user, song, fileName);
 
                 return RedirectToAction("Index", "Songs");
             }

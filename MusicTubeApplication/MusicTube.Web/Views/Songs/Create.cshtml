@@ -65,6 +65,28 @@
             }
 </style>
 
+<script>
+
+    $(document).ready(function () {
+
+        $("#fileName").hide();
+
+        $("#songToUpload").change(function (e) {
+
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+
+                $("#fileName").show();
+                $("#fileName").html(file.name);
+            }
+
+        })
+
+    })
+
+</script>
+
 <h1 class="text-center mt-5">Create Song</h1>
 <br />
 <div class="row mb-5">
@@ -79,6 +101,7 @@
                         <i class="fa fa-arrow-up"></i>
                     </div>
                 </div>
+                <p id="fileName" class="btn btn-outline-info text-white"></p>
                 <p class="text-secondary mt-1">
                     <i><b>.mp3</b> file format accepted</i>
                 </p>
@@ -109,19 +132,19 @@
                 </div>
             </div>
             @if (Model.Creator.PremiumPlan != null)
-            {
-                <h4 class="mb-2" style="color:orange;">Premium features</h4>
-                <br />
-                <hr class="text-secondary w-100" />
-                <br />
-                <div class="form-group col-12">
-                    <div class="form-group col-12 mb-4">
-                        @Html.DropDownListFor(z => z.AlbumId,
-                                    new SelectList(Model.AllAlbums, "Id", "ArtistName"), "Select the album you want the song to appear on",
-                                    new { @class = "form-control" });
-                    </div>
+        {
+            <h4 class="mb-2" style="color:orange;">Premium features</h4>
+            <br />
+            <hr class="text-secondary w-100" />
+            <br />
+            <div class="form-group col-12">
+                <div class="form-group col-12 mb-4">
+                    @Html.DropDownListFor(z => z.AlbumId,
+                                new SelectList(Model.AllAlbums, "Id", "ArtistName"), "Select the album you want the song to appear on",
+                                new { @class = "form-control" });
                 </div>
-            }
+            </div>
+        }
             <br />
             <div class="form-group col-12">
                 <input type="submit" class="btn btn-block btn-primary" />

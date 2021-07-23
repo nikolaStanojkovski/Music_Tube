@@ -13,4 +13,8 @@
     <ProjectReference Include="..\MusicTube.Domain\MusicTube.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

@@ -20,15 +20,10 @@ namespace MusicTube.Domain.DTO
         public String Label { get; set; }
         [Required]
         public Genre Genre { get; set; }
-        [Required]
+
         public Creator Creator { get; set; }
-
-
-        [Required]
         public String AudioURL { get; set; }
         public Guid AlbumId { get; set; }
-        [Required]
-        public Album Album { get; set; }
 
         public List<Album> AllAlbums { get; set; }
     }

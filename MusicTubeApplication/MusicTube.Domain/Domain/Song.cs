@@ -12,9 +12,9 @@ namespace MusicTube.Domain.Domain
         [Required]
         public String AudioURL { get; set; }
 
-        public Guid AlbumId { get; set; }
-        [Required]
-        public virtual Album Album { get; set; }
+        public Guid? AlbumId { get; set; }
+
+        public virtual Album? Album { get; set; }
 
         public virtual List<Video> VideosAppearedIn { get; set; }
     }

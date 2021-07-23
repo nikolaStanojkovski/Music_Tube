@@ -1,0 +1,153 @@
+﻿@model MusicTube.Domain.DTO.UserSettingsDto
+
+@{
+    ViewData["Title"] = "User Settings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    @Html.ValidationSummary()
+
+    <div class="container px-5 my-5 pb-5" style="border-radius: 10px;">
+
+        <div class="row mb-5">
+            <div class="col text-center text-light">
+                <h1 class="lead display-4 font-weight-light">Account Settings</h1>
+            </div>
+        </div>
+
+        <h4 class="text-light">Personal Information</h4>
+        <hr class="w-100 text-light my-4" />
+
+        <!-- Personal Information -->
+
+        <form asp-action="SettingsProfilePicture" asp-controller="Account" method="post" enctype="multipart/form-data">
+            <div class="row mb-4 mt-4">
+                <div class="col-3 text-right">
+                    <b class="text-right text-secondary">Profile Picture</b>
+                </div>
+                <div class="col-2 text-center">
+                    <img class="rounded-circle border border-secondary" src="~/custom/img/profile-pictures/@Model.ImageURL" height="130" width="130" />
+                </div>
+                <div class="col-6 form-group">
+                    <input id="file" name="file" type="file" accept="image/*" />
+                    <p class="lead mt-1">Accpeted file types: .png, jpg</p>
+                    <button type="submit" class="btn btn-secondary">Change Picture</button>
+                </div>
+            </div>
+        </form>
+
+        <form asp-action="SettingsPersonalInfo" asp-controller="Account" method="post">
+
+            <div class="text-secondary">
+                <div class="row form-group mb-4">
+                    <div class="col-3 text-right">
+                        <b>E-mail</b>
+                    </div>
+                    <div class="col-9">
+                        <input id="email" name="email" type="text" disabled class="form-control" value="@Model.Mail" />
+                        @Html.ValidationMessageFor(m => m.Mail)
+                    </div>
+                </div>
+
+                <div class="row form-group mb-4">
+                    <div class="col-3 text-right">
+                        <b>First Name</b>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-4">
+                    <div class="col-3 text-right">
+                        <b>Last Name</b>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="Surname" class="form-control" />
+                        <span asp-validation-for="Surname" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-4">
+                    <div class="col-3 text-right">
+                        <b>Favourite Genre</b>
+                    </div>
+                    <div class="col-9">
+                        <select class="form-control" asp-for="FavouriteGenre" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.Genre>()">
+                        </select>
+                        <span asp-validation-for="FavouriteGenre" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-5">
+                    <div class="col-3">
+
+                    </div>
+                    <div class="col-9">
+                        <button class="btn btn-info btn-block" type="submit">Change</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+        <h4 class="mt-1 text-light">Community Information</h4>
+        <hr class="w-100 text-secondary my-4" />
+
+        <!-- Community Information -->
+
+        @* <form asp-action="SettingsCommunityInfo" asp-controller="Account" method="post">
+
+            <div class="row form-group mb-4">
+                <div class="col-3 text-right">
+                    <b>Art Name</b>
+                </div>
+                <div class="col-9">
+                    <input asp-for="ArtName" class="form-control" />
+                    <span asp-validation-for="ArtName" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row form-group mb-4">
+                <div class="col-3 text-right">
+                    <b>Favourite Fruit</b>
+                </div>
+                <div class="col-9">
+                    <input asp-for="FavouriteFruit" class="form-control" />
+                    <span asp-validation-for="FavouriteFruit" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row form-group mb-5">
+                <div class="col-3 text-right">
+                    <b>Favourite Veggie</b>
+                </div>
+                <div class="col-9">
+                    <input asp-for="FavouriteVeggie" class="form-control" />
+                    <span asp-validation-for="FavouriteVeggie" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="row form-group mb-5">
+                <div class="col-3">
+
+                </div>
+                <div class="col-9">
+                    <button class="btn btn-info btn-block" type="submit">Change</button>
+                </div>
+            </div>
+
+        </form>
+        *@
+        <hr class="w-100 text-secondary my-4" />
+
+        <a class="btn btn-block btn-danger" asp-action="Logout" asp-controller="Account">
+            Logout
+        </a>
+
+
+    </div>
+
+</div>

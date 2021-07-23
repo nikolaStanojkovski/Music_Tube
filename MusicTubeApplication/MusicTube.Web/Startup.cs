@@ -47,6 +47,7 @@ namespace MusicTube.Web
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+            services.AddScoped(typeof(ISongRepository), typeof(SongRepository));
 
             // Service scoping
 

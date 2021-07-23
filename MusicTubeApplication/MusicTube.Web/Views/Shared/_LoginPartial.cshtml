@@ -7,12 +7,29 @@
 <ul class="navbar-nav bg-dark">
     @if (SignInManager.IsSignedIn(User))
     {
+        var user = UserManager.GetUserAsync(User).Result;
+
+        if (((Creator)user).PremiumPlan == null)
+        {
+            <li class="nav-item align-content-center mt-2 mr-2">
+                <a class="btn btn-outline-warning" asp-controller="Account" asp-action="PremiumPlan">
+                    Get Premium Now
+                </a>
+            </li>
+        }
+
         <li class="nav-item">
-            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@User.Identity.Name</a>
+            <a class="nav-link text-white" asp-controller="Account" asp-action="Settings">
+                <span>
+                    @user.Name @user.Surname
+                    <img height="35" width="35" class=" mx-2 rounded-circle"
+                         src="~/custom/img/profile-pictures/@user.ImageURL" />
+                </span>
+            </a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-controller="Account" asp-action="Logout">
-                <button type="submit" class="nav-link text-danger btn btn-link">Logout</button>
+                <button type="submit" class="nav-link text-danger ml-1 btn btn-link">Logout</button>
             </form>
         </li>
     }

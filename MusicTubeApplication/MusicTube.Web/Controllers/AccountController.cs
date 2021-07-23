@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusicTube.Domain.DTO;
@@ -6,6 +7,7 @@ using MusicTube.Domain.Identity;
 using MusicTube.Service.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -121,6 +123,41 @@ namespace MusicTube.Web.Controllers
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
+        }
+
+        public async Task<IActionResult> Settings()
+        {
+            var user = await userManager.FindByEmailAsync(User.Identity.Name);
+            var model = userService.GetUserSettings(user);
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SettingsProfilePicture([FromForm(Name = "file")] IFormFile file)
+        {
+            var user = await userManager.FindByEmailAsync(User.Identity.Name);
+
+            if (file != null)
+            {
+                var fileName = user.Id + ".png";
+
+                string pathToUpload = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\img\\profile-pictures\\{fileName}";
+
+                using (FileStream fileStream = System.IO.File.Create(pathToUpload))
+                {
+                    file.CopyTo(fileStream);
+                    fileStream.Flush();
+                }
+
+                UserSettingsDto model = new UserSettingsDto
+                {
+                    ImageURL = fileName
+                };
+                userService.UpdateUserPersonalInformation(user, model);
+            }
+
             return RedirectToAction("Index", "Home");
         }
     }

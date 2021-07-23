@@ -14,5 +14,9 @@ namespace MusicTube.Service.Interface
         public MusicTubeUser CreateNewUser(UserRegistrationDto request);
 
         public UserRegistrationDto GetUserRegistrationDto(UserManager<MusicTubeUser> userManager);
+
+        public UserSettingsDto GetUserSettings(MusicTubeUser user);
+
+        public void UpdateUserPersonalInformation(MusicTubeUser user, UserSettingsDto model);
     }
 }
