@@ -1,4 +1,5 @@
 ﻿using MusicTube.Domain.Domain;
+using MusicTube.Domain.DTO;
 using MusicTube.Domain.Identity;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,8 @@ namespace MusicTube.Service.Interface
     public interface ISongService
     {
         public List<Song> GetAllSongs();
+
+        public SongDto GetSongDto(Creator user);
 
         public Song CreateNewSong(Creator user, Song song, String songURL);
     }

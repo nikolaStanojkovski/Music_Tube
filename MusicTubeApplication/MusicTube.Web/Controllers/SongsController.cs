@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MusicTube.Domain.Domain;
+using MusicTube.Domain.DTO;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
 using MusicTube.Service.Interface;
@@ -38,9 +39,10 @@ namespace MusicTube.Web.Controllers
         }
 
         // GET: Songs/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            Song song = new Song();
+            var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+            SongDto song = songService.GetSongDto(user);
             return View(song);
         }
 
@@ -62,6 +64,7 @@ namespace MusicTube.Web.Controllers
                     songToUpload.CopyTo(fileStream);
                     fileStream.Flush();
                 }
+                // Mp3FileReader reader = new Mp3FileReader(pathToUpload);
 
                 songService.CreateNewSong(user, song, pathToUpload);
 
