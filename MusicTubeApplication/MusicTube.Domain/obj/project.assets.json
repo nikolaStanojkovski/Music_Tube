@@ -1732,11 +1732,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTube.Domain\\MusicTube.Domain.csproj",
+      "projectUniqueName": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTubeApplication\\MusicTube.Domain\\MusicTube.Domain.csproj",
       "projectName": "MusicTube.Domain",
-      "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTube.Domain\\MusicTube.Domain.csproj",
+      "projectPath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTubeApplication\\MusicTube.Domain\\MusicTube.Domain.csproj",
       "packagesPath": "C:\\Users\\Nick\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTube.Domain\\obj\\",
+      "outputPath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTubeApplication\\MusicTube.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Nick\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1789,7 +1789,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.301\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
       }
     }
   }

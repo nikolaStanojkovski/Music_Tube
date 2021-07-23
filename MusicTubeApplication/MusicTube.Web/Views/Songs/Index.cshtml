@@ -1,0 +1,70 @@
+﻿@model IEnumerable<MusicTube.Domain.Domain.Song>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Healthy Diet</title>
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<h1 class="display-4 my-4 text-center lead">All Songs</h1>
+
+@if (User.IsInRole("Creator"))
+{
+    <a asp-controller="Songs" asp-action="Create" class="btn btn-block btn-primary">
+        Add Song
+    </a>
+}
+
+<div class="row">
+    @{
+        if (Model.Count() != 0)
+        {
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                var item = Model.ElementAt(i);
+
+                <div class="col-4 mb-4">
+                        <div class="card bg-light">
+                            <div class="view">
+                                <img class="card-img-top" src="~/custom/img/profile-pictures/@item.Creator.ImageURL"
+                                     alt="Card image cap">
+                            </div>
+
+                            <div class="card-body text-center">
+                                <h5 class="h5 font-weight-bold text-primary">@item.Name</h5>
+                                <p class="mb-0">@item.Description</p>
+
+                                <audio id="music" preload="true">
+                                    <source src="~/custom/files/audio/@item.AudioURL">
+                                </audio>
+                                <div id="audioplayer">
+                                    <i id="pButton" class="fas fa-play"></i>
+                                    <div id="timeline">
+                                        <div id="playhead"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            }
+        }
+
+    }
+</div>

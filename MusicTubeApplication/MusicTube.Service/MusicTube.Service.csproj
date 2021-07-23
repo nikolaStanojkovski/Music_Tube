@@ -5,11 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interface\" />
-    <Folder Include="Implementation\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\MusicTube.Domain\MusicTube.Domain.csproj" />
     <ProjectReference Include="..\MusicTube.Repository\MusicTube.Repository.csproj" />
   </ItemGroup>

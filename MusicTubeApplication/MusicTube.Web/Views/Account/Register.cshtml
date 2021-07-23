@@ -1,0 +1,195 @@
+﻿@model MusicTube.Domain.DTO.UserRegistrationDto
+
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Healthy Diet</title>
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#creatorSpecificInfo").hide();
+
+        $("#creator").click(function () {
+            $("#creatorSpecificInfo").show();
+        });
+
+        $("#listener").click(function () {
+            $("#creatorSpecificInfo").hide();
+        });
+
+    });
+
+</script>
+
+<div class="container pb-5">
+    @Html.ValidationSummary()
+    <form asp-action="Register" asp-controller="Account" method="post">
+        <div class="container px-5 my-5 py-5 bg-light" style="border-radius: 10px;">
+
+            <div class="row mb-4">
+                <div class="col text-center text-dark">
+                    <h1 class="lead display-4 font-weight-light">Register</h1>
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <div>
+                    @Html.TextBoxFor(m => m.Name, new { placeholder = "Name", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Name)
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <div>
+                    @Html.TextBoxFor(m => m.Surname, new { placeholder = "Surname", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Surname)
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <div>
+                    <select class="form-control" asp-for="@Model.FavouriteGenre" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.Genre>()">
+                        <option disabled selected>Genre</option>
+                    </select>
+                    @Html.ValidationMessageFor(m => m.FavouriteGenre)
+                </div>
+            </div>
+
+            <div class="form-group col-12 text-dark">
+                <div class="row mt-3">
+                    <div class="form-check col-5 ml-4 mr-4">
+                        <input asp-for="Role" required class="form-check-input" type="radio" name="role" value="Creator" id="creator">
+                        <label class="form-check-label" for="creator">
+                            Creator
+                        </label>
+                    </div>
+                    <div class="form-check col-6">
+                        <input asp-for="Role" required class="form-check-input" type="radio" name="role" value="Listener" id="listener">
+                        <label class="form-check-label" for="listener">
+                            Listener
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="creatorSpecificInfo">
+                <div class="form-group col-12">
+                    <div>
+                        @Html.TextBoxFor(m => m.ArtistName, new { placeholder = "Artist Name", @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ArtistName)
+                    </div>
+                </div>
+
+                <div class="form-group col-12">
+                    <div>
+                        @Html.TextBoxFor(m => m.ArtistDescription, new { placeholder = "Artist Description", @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.ArtistDescription)
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group col-12 mb-4">
+                @Html.DropDownListFor(z => z.FavouriteArtistId,
+                            new SelectList(Model.AllCreators, "Id", "ArtistName"), "Select your favourite arrtist",
+                            new { @class = "form-control" });
+            </div>
+
+            <div class="form-group col-12 text-dark">
+                <div class="row">
+                    <div class="form-check col-5 ml-4 mr-4">
+                        <input asp-for="NewsletterSubscribed" class="form-check-input" type="radio" name="newsLetters" value="true" id="newslettersTrue">
+                        <label class="form-check-label" for="newslettersTrue">
+                            I want to get notified about my favourite artist
+                        </label>
+                    </div>
+                    <div class="form-check col-6">
+                        <input asp-for="NewsletterSubscribed" class="form-check-input" type="radio" name="newsLetters" value="false" id="newslettersFalse">
+                        <label class="form-check-label" for="newslettersFalse">
+                            I don't want to get notified about my favourite artist
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+            <hr class="w-50 text-secondary" />
+            <br />
+
+            <div class="form-group col-12">
+                <div>
+                    @Html.TextBoxFor(m => m.Email, new { placeholder = "Email", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Email)
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <div>
+                    @Html.TextBoxFor(m => m.Password, new { placeholder = "Password", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.Password)
+                </div>
+            </div>
+
+            <div class="form-group col-12">
+                <div>
+                    @Html.TextBoxFor(m => m.ConfirmPassword, new { placeholder = "Confirm Password", @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.ConfirmPassword)
+                </div>
+            </div>
+
+            <br />
+            <div class="form-group col-12">
+                <button type="submit" class="btn btn-primary btn-block" style="font-size: 25px;">Sign Up</button>
+            </div>
+
+            <div class="text-center form-group col-12 mb-4">
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-info btn-block">Sign In</a>
+            </div>
+
+            <hr class="text-info w-25" />
+
+            <div class="col-12 text-center mt-4 pb-1">
+
+                <!-- Facebook -->
+                <a class="btn btn-outline-dark m-1" href="#" role="button">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+
+                <!-- Twitter -->
+                <a class="btn btn-outline-dark mx-1" href="#" role="button">
+                    <i class="fab fa-twitter"></i>
+                </a>
+
+                <!-- Google -->
+                <a class="btn btn-outline-dark mx-1" href="#" role="button">
+                    <i class="fab fa-google"></i>
+                </a>
+
+                <!-- Instagram -->
+                <a class="btn btn-outline-dark mx-1" href="#" role="button">
+                    <i class="fab fa-instagram"></i>
+                </a>
+
+                <!-- Linkedin -->
+                <a class="btn btn-outline-dark mx-1" href="#" role="button">
+                    <i class="fab fa-pinterest"></i>
+                </a>
+            </div>
+        </div>
+    </form>
+
+</div>

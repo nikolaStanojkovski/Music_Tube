@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kCvD+lato9gvLNga5h4r2KdbN37G5JjnkYCJc/XXwnaFUxglDI3U7WG5Qvr77InaXWgS5ZXwtiiJzfFMcKE9BA==",
+  "dgSpecHash": "p8bxsuSARQwvZC2ylI0Vq9j7A5c89my+z2tucowrUCY118I/sTQWN+euP273iuDq7B1pDW+wwz4GUKlysLCyWQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTube.Domain\\MusicTube.Domain.csproj",
+  "projectFilePath": "C:\\Users\\Nick\\Documents\\GitHub\\Music_Tube\\MusicTubeApplication\\MusicTube.Domain\\MusicTube.Domain.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Nick\\.nuget\\packages\\microsoft.aspnetcore.authentication\\2.2.0\\microsoft.aspnetcore.authentication.2.2.0.nupkg.sha512",
     "C:\\Users\\Nick\\.nuget\\packages\\microsoft.aspnetcore.authentication.abstractions\\2.2.0\\microsoft.aspnetcore.authentication.abstractions.2.2.0.nupkg.sha512",

@@ -9,6 +9,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
+using MusicTube.Repository.Implementation;
+using MusicTube.Repository.Interface;
+using MusicTube.Service.Implementation;
+using MusicTube.Service.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,8 +38,20 @@ namespace MusicTube.Web
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<MusicTubeUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
             services.AddControllersWithViews();
+
+            // Repository scoping
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+
+            // Service scoping
+
+            services.AddTransient<IUserService, UserService>();
+            services.AddTransient<ISongService, SongService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
