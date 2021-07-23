@@ -766,7 +766,6 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\MusicTube.Domain.pdb
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\MusicTube.Repository.pdb
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\MusicTube.Service.pdb
-C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.csprojAssemblyReference.cache
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.AssemblyInfoInputs.cache
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.AssemblyInfo.cs
@@ -845,7 +844,7 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\runtimes\win-arm\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Create.cshtml.g.cs
-C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Delete.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Details.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Edit.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Index.cshtml.g.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\MusicTube.Web.csproj.AssemblyReference.cache

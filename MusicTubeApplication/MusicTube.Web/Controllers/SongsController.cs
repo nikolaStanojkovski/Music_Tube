@@ -51,7 +51,7 @@ namespace MusicTube.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Label,AlbumId,Description,Genre")] Song song, IFormFile songToUpload)
+        public async Task<IActionResult> Create([Bind("Name,Label,AlbumId,Description,Genre")] SongDto song, IFormFile songToUpload)
         {
             if (ModelState.IsValid)
             {

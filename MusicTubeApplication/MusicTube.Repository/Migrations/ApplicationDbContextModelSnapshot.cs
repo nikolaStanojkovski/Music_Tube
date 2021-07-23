@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using MusicTube.Repository;
 
 namespace MusicTube.Repository.Migrations
 {
@@ -229,7 +230,7 @@ namespace MusicTube.Repository.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Media");
                 });
 
-            modelBuilder.Entity("MusicTube.Domain.Domain.PremiumPlan", b =>
+            modelBuilder.Entity("MusicTube.Domain.Domain.Subdomain.PremiumPlan", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -283,7 +284,7 @@ namespace MusicTube.Repository.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("MusicTube.Domain.Domain.UserFeedback", b =>
+            modelBuilder.Entity("MusicTube.Domain.Domain.Subdomain.UserFeedback", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -412,18 +413,9 @@ namespace MusicTube.Repository.Migrations
                     b.Property<Guid>("AlbumId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("AudioQuality")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("AudioSampleRate")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("AudioURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("Length")
-                        .HasColumnType("bigint");
 
                     b.HasIndex("AlbumId");
 
@@ -434,18 +426,8 @@ namespace MusicTube.Repository.Migrations
                 {
                     b.HasBaseType("MusicTube.Domain.Domain.Media");
 
-                    b.Property<long>("Length")
-                        .HasColumnType("bigint")
-                        .HasColumnName("Video_Length");
-
                     b.Property<Guid>("SongId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<long>("VideoFrameRate")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("VideoQuality")
-                        .HasColumnType("bigint");
 
                     b.Property<string>("VideoURL")
                         .IsRequired()
@@ -532,7 +514,7 @@ namespace MusicTube.Repository.Migrations
 
             modelBuilder.Entity("MusicTube.Domain.Domain.Album", b =>
                 {
-                    b.HasOne("MusicTube.Domain.Domain.PremiumPlan", "PremiumUser")
+                    b.HasOne("MusicTube.Domain.Domain.Subdomain.PremiumPlan", "PremiumUser")
                         .WithMany("Albums")
                         .HasForeignKey("PremiumUserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -552,11 +534,11 @@ namespace MusicTube.Repository.Migrations
                     b.Navigation("Creator");
                 });
 
-            modelBuilder.Entity("MusicTube.Domain.Domain.PremiumPlan", b =>
+            modelBuilder.Entity("MusicTube.Domain.Domain.Subdomain.PremiumPlan", b =>
                 {
                     b.HasOne("MusicTube.Domain.Identity.Creator", "Creator")
                         .WithOne("PremiumPlan")
-                        .HasForeignKey("MusicTube.Domain.Domain.PremiumPlan", "CreatorId")
+                        .HasForeignKey("MusicTube.Domain.Domain.Subdomain.PremiumPlan", "CreatorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -582,7 +564,7 @@ namespace MusicTube.Repository.Migrations
                     b.Navigation("Media");
                 });
 
-            modelBuilder.Entity("MusicTube.Domain.Domain.UserFeedback", b =>
+            modelBuilder.Entity("MusicTube.Domain.Domain.Subdomain.UserFeedback", b =>
                 {
                     b.HasOne("MusicTube.Domain.Domain.Media", "Media")
                         .WithMany("Feedbacks")
@@ -645,7 +627,7 @@ namespace MusicTube.Repository.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("MusicTube.Domain.Domain.PremiumPlan", b =>
+            modelBuilder.Entity("MusicTube.Domain.Domain.Subdomain.PremiumPlan", b =>
                 {
                     b.Navigation("Albums");
                 });

@@ -15,6 +15,6 @@ namespace MusicTube.Service.Interface
 
         public SongDto GetSongDto(Creator user);
 
-        public Song CreateNewSong(Creator user, Song song, String songURL);
+        public Song CreateNewSong(Creator user, SongDto song, String songURL);
     }
 }

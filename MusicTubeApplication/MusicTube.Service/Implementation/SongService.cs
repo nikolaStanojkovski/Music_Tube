@@ -48,8 +48,12 @@ namespace MusicTube.Service.Implementation
             };
         }
 
-        public Song CreateNewSong(Creator user, Song song, string songURL)
+        public Song CreateNewSong(Creator user, SongDto song, string songURL)
         {
+            Album album = new Album();
+            if (song.AlbumId != null)
+                album = albumRepository.Read(song.AlbumId);
+
             Song songToCreate = new Song
             {
                 Id = Guid.NewGuid(),
@@ -68,15 +72,13 @@ namespace MusicTube.Service.Implementation
 
                 AudioURL = song.AudioURL,
 
-                Album = song.Album,
-                AlbumId = song.Album.Id,
+                Album = album,
+                AlbumId = song.AlbumId,
                 VideosAppearedIn = new List<Video>()
             };
 
-            user.Content.Add(songToCreate);
-
-            userRepository.UpdateUser(user);
             songRepository.Create(songToCreate);
+            userRepository.UpdateUser(user);
 
             return songToCreate;
         }

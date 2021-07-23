@@ -23,7 +23,6 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\bin\Debug\net5.0\MusicTube.Repository.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\bin\Debug\net5.0\MusicTube.Domain.pdb
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\bin\Debug\net5.0\MusicTube.Repository.pdb
-C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.csprojAssemblyReference.cache
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.AssemblyInfoInputs.cache
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.AssemblyInfo.cs
@@ -32,3 +31,4 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\ref\MusicTube.Service.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.pdb
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Service\obj\Debug\net5.0\MusicTube.Service.csproj.AssemblyReference.cache

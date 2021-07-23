@@ -10,12 +10,6 @@ namespace MusicTube.Domain.Domain
     public class Video : Media
     {
         [Required]
-        public Int64 Length { get; set; } // in seconds
-        [Required]
-        public Int64 VideoQuality { get; set; } // in PSNR
-        [Required]
-        public Int64 VideoFrameRate { get; set; } // in FPS
-        [Required]
         public String VideoURL { get; set; }
 
         public Guid SongId { get; set; }
