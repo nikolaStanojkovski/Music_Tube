@@ -1,0 +1,53 @@
+﻿@model MusicTube.Domain.DTO.SongAlbumDto
+
+@{
+    ViewData["Title"] = "Add Song to Album";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="my-5">Add Selected Song to an Album:</h2>
+
+<hr />
+
+<div class="row">
+    <div class="col-12">
+        <form asp-action="AddSongToAlbum" method="post">
+            <input type="hidden" asp-for="SongId" />
+
+            <div class="form-group">
+                <label asp-for="@Model.Song.Name"></label>
+                <input disabled asp-for="@Model.Song.Name" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.Song.Description"></label>
+                <input disabled asp-for="@Model.Song.Description" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.Song.Genre"></label>
+                <input disabled asp-for="@Model.Song.Genre" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="@Model.Song.Label"></label>
+                <input disabled asp-for="@Model.Song.Label" class="form-control" />
+            </div>
+
+            <hr class="text-center text-info w-100 mt-4" />
+
+            <div class="form-group">
+                <label>Album</label>
+                @Html.DropDownListFor(z => z.AlbumId,
+                                new SelectList(Model.AllAlbums, "Id", "ArtistName"),
+                                "Select the album you want the song to appear on",
+                                new { @class = "form-control" })
+            </div>
+
+            <div class="form-group mt-5">
+                <button type="submit" class="btn btn-primary btn-block my-4">Save</button>
+            </div>
+        </form>
+        <a asp-action="Index" class="btn btn-outline-info btn-block my-4">Back to List</a>
+    </div>
+</div>

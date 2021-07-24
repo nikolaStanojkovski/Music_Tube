@@ -1,9 +1,27 @@
 ﻿@model MusicTube.Domain.DTO.UserSettingsDto
+@using MusicTube.Domain.Identity
 
 @{
     ViewData["Title"] = "User Settings";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<head>
+    <meta charset="UTF-8">
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
 
 <div class="container">
     @Html.ValidationSummary()
@@ -81,6 +99,57 @@
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-3 text-right">
+                        <b>Favourite Artist</b>
+                    </div>
+                    <div class="form-group col-9 mb-4">
+                        @if (Model.AllCreators.Count != 0)
+                        {
+                            if (Model.FavouriteArtist != null)
+                            {
+                                @Html.DropDownListFor(z => z.FavouriteArtistId, new SelectList(Model.AllCreators, "Id", "ArtistName", Model.FavouriteArtist.ArtistName),
+                                                                                                "Select your favourite artist",
+                                                                                                new { @class = "form-control" })
+                            }
+                            else
+                            {
+                                @Html.DropDownListFor(z => z.FavouriteArtistId, new SelectList(Model.AllCreators, "Id", "ArtistName"),
+                                                                                                "Select your favourite artist",
+                                                                                                new { @class = "form-control" })
+                            }
+                        }
+                        else
+                        {
+                            <select class="form-control" asp-for="FavouriteArtistId">
+                                <option value="0">Select your favourite artist</option>
+                            </select>
+                        }
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-3">
+
+                    </div>
+                    <div class="col-9 form-group text-light">
+                        <div class="row">
+                            <div class="form-check col-5 ml-3">
+                                <input asp-for="NewsletterSubscribed" class="form-check-input" type="radio" name="newsLetters" value="true" id="newslettersTrue">
+                                <label class="form-check-label" for="newslettersTrue">
+                                    Subscribed to newsletters
+                                </label>
+                            </div>
+                            <div class="form-check col-6 text-left">
+                                <input asp-for="NewsletterSubscribed" class="form-check-input" type="radio" name="newsLetters" value="false" id="newslettersFalse">
+                                <label class="form-check-label" for="newslettersFalse">
+                                    Unsubscribed to newsletters
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row form-group mb-5">
                     <div class="col-3">
 
@@ -93,54 +162,226 @@
 
         </form>
 
-        <h4 class="mt-1 text-light">Community Information</h4>
-        <hr class="w-100 text-secondary my-4" />
+        @if (Model.CurrentUser.GetType().Name.Equals("Creator"))
+        {
+            <h4 class="mt-1 text-light">Creator Information</h4>
+            <hr class="w-100 my-4" style="height: 3px; color: white;" />
 
-        <!-- Community Information -->
+            <!-- Creator Specific Information -->
+            <form asp-action="SettingsCreatorInfo" asp-controller="Account" method="post">
 
-        @* <form asp-action="SettingsCommunityInfo" asp-controller="Account" method="post">
+                <div class="row form-group mb-4 text-secondary">
+                    <div class="col-3 text-right">
+                        <b>Artist Name</b>
+                    </div>
+                    <div class="col-9">
+                        <input asp-for="ArtistName" class="form-control" />
+                        <span asp-validation-for="ArtistName" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-4">
+                    <div class="col-3 text-right text-secondary">
+                        <b>Artist Description</b>
+                    </div>
+                    <div class="col-9">
+                        <textarea rows="5" asp-for="ArtistDescription" class="form-control"></textarea>
+                        <span asp-validation-for="ArtistDescription" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-4 mt-3 text-secondary">
+                    <div class="col-3 text-right">
+                        <b>Premium Plan</b>
+                    </div>
+                    <div class="col-9">
+                        @if (((Creator)Model.CurrentUser).PremiumPlanId == null)
+                        {
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <span class="text-danger">You still haven't selected a premium plan</span>
+                                </div>
+                                <div class="col-6 text-left">
+                                    <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
+                                        Get Premium Now
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-6 text-left">
+                                    <span class="text-warning">Your current premium plan is <b>@Model.PremiumPlan.SubscriptionPlan</b></span>
+                                </div>
+                                <div class="col-6 text-left">
+                                    <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
+                                        Get a better Premium Plan Tier
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="row form-group mb-5">
+                    <div class="col-3 text-right text-secondary">
+                        <b>Fans</b>
+                    </div>
+                    <div class="col-9">
+                        <span class="text-light">
+                            You have a total of <b class="text-light font-weight-bold">@(((Creator)Model.CurrentUser).Fans.Count)</b> fans
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row form-group mb-5">
+                    <div class="col-3">
+
+                    </div>
+                    <div class="col-9">
+                        <button class="btn btn-info btn-block" type="submit">Change</button>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- Media Content Information -->
+            <h4 class="mt-1 text-light">Media Content</h4>
+            <hr class="w-100 my-4" style="height: 3px; color: white;" />
 
             <div class="row form-group mb-4">
-                <div class="col-3 text-right">
-                    <b>Art Name</b>
-                </div>
-                <div class="col-9">
-                    <input asp-for="ArtName" class="form-control" />
-                    <span asp-validation-for="ArtName" class="text-danger"></span>
+                <div class="col-12">
+                    <table class="table text-light">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Label</th>
+                                <th scope="col">Genre</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                if (Model.Content != null && Model.Content.Count != 0)
+                                {
+                                    foreach (var media in Model.Content)
+                                    {
+                                        <tr>
+                                            <td>@media.Name</td>
+                                            <td>@media.Description</td>
+                                            <td>@media.Label</td>
+                                            <td>@media.Genre</td>
+                                            <td>
+                                                @{
+                                                    var averageRating = 0;
+                                                    if (Model.Reviews != null && Model.Reviews.Count != 0)
+                                                        averageRating = (int)media.Reviews.Average(z => z.Rating);
+
+                                                    for (int i = 0; i < averageRating; i++)
+                                                    {
+                                                        <span class="fa fa-star checked" style="color: orange;"></span>
+                                                    }
+                                                    for (int i = 0; i < 5 - averageRating; i++)
+                                                    {
+                                                        <span class="fa fa-star text-light"></span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="row">
+                                                    @if (media.GetType().Name.Equals("Song"))
+                                                    {
+                                                        <div class="col-6">
+                                                            <a asp-controller="Songs" asp-action="Details" asp-route-songId="@media.Id" class="btn btn-outline-info btn-block">Details</a>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <a asp-controller="Songs" asp-action="Delete" asp-route-songId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>
+                                                        </div>
+                                                    }
+                                                    else
+                                                    {
+                                                        <div class="col-6">
+                                                            <a asp-controller="Videos" asp-action="Details" asp-route-videoId="@media.Id" class="btn btn-outline-info btn-block">Details</a>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <a asp-controller="Videos" asp-action="Delete" asp-route-videoId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>
+                                                        </div>
+                                                    }
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        }
+        else
+        {
+            <h4 class="mt-1 text-light">Reviews</h4>
+            <hr class="w-100 h-100 text-secondary my-4" style="height: 2px;" />
 
             <div class="row form-group mb-4">
-                <div class="col-3 text-right">
-                    <b>Favourite Fruit</b>
-                </div>
-                <div class="col-9">
-                    <input asp-for="FavouriteFruit" class="form-control" />
-                    <span asp-validation-for="FavouriteFruit" class="text-danger"></span>
+                <div class="col-12">
+                    <table class="table text-light">
+                        <thead>
+                            <tr>
+                                <th scope="col">Summary</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Media</th>
+                                <th scope="col">Rating</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                if (Model.Reviews != null && Model.Reviews.Count != 0)
+                                {
+                                    foreach (var review in Model.Reviews)
+                                    {
+                                        <tr>
+                                            <td>@review.Summary</td>
+                                            <td>@review.Description</td>
+                                            <td>@review.Media.Name</td>
+                                            <td>
+                                                @{
+                                                    var averageRating = review.Rating;
+
+                                                    for (int i = 0; i < averageRating; i++)
+                                                    {
+                                                        <span class="fa fa-star checked" style="color: orange;"></span>
+                                                    }
+                                                    for (int i = 0; i < 5 - averageRating; i++)
+                                                    {
+                                                        <span class="fa fa-star text-light"></span>
+                                                    }
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                        <a asp-controller="Account" asp-action="RemoveReview" asp-route-reviewId="@review.Id" class="btn btn-outline-danger btn-block">Remove</a>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+
+                            }
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        }
 
-            <div class="row form-group mb-5">
-                <div class="col-3 text-right">
-                    <b>Favourite Veggie</b>
-                </div>
-                <div class="col-9">
-                    <input asp-for="FavouriteVeggie" class="form-control" />
-                    <span asp-validation-for="FavouriteVeggie" class="text-danger"></span>
-                </div>
-            </div>
-
-            <div class="row form-group mb-5">
-                <div class="col-3">
-
-                </div>
-                <div class="col-9">
-                    <button class="btn btn-info btn-block" type="submit">Change</button>
-                </div>
-            </div>
-
-        </form>
-        *@
         <hr class="w-100 text-secondary my-4" />
 
         <a class="btn btn-block btn-danger" asp-action="Logout" asp-controller="Account">

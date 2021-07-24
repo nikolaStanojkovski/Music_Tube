@@ -6,6 +6,7 @@ using MusicTube.Repository.Interface;
 using MusicTube.Service.Interface;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -48,7 +49,7 @@ namespace MusicTube.Service.Implementation
             };
         }
 
-        public Song CreateNewSong(Creator user, SongDto song, string songURL)
+        public Song CreateSong(Creator user, SongDto song, string songURL)
         {
             Album album = null;
             Song songToCreate;
@@ -106,6 +107,48 @@ namespace MusicTube.Service.Implementation
             userRepository.UpdateUser(user);
 
             return songToCreate;
+        }
+
+        public Song ReadSong(Guid? songId)
+        {
+            return songRepository.ReadSong(songId);
+        }
+
+        public Song DeleteSong(Guid? songId)
+        {
+            Song songToDelete = ReadSong(songId);
+            songRepository.DeleteSong(songToDelete);
+
+            string rootFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\files\\audio";
+            File.Delete(Path.Combine(rootFolder, songToDelete.AudioURL));
+
+            return songToDelete;
+        }
+
+        public SongAlbumDto GetSongAlbumDto(Creator user, Guid? songId)
+        {
+            Song song = songRepository.ReadSong(songId);
+            List<Album> allAlbums = albumRepository.ReadAll()
+                .Where(z => z.PremiumUserId.Equals(user.PremiumPlanId))
+                .ToList();
+
+            return new SongAlbumDto()
+            {
+                AllAlbums = allAlbums,
+                Song = song,
+                SongId = songId.Value
+            };
+        }
+
+        public void AddSongToAlbum(SongAlbumDto model)
+        {
+            Song songToAdd = songRepository.ReadSong(model.SongId);
+            Album album = albumRepository.Read(model.AlbumId);
+            if(album != null)
+            {
+                album.Songs.Add(songToAdd);
+                albumRepository.Update(album);
+            }
         }
     }
 }

@@ -12,13 +12,17 @@ namespace MusicTube.Domain.DTO
 {
     public class UserSettingsDto
     {
+        public MusicTubeUser CurrentUser { get; set; }
+
         public String Name { get; set; }
         public String Mail { get; set; }
         public String Surname { get; set; }
         public String ImageURL { get; set; }
         public Boolean NewsletterSubscribed { get; set; }
         public Genre FavouriteGenre { get; set; }
+        public string FavouriteArtistId { get; set; }
         public Creator FavouriteArtist { get; set; }
+        public List<Creator> AllCreators { get; set; }
 
         // Creator specific properties
         public String ArtistName { get; set; }

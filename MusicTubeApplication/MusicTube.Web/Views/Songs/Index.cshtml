@@ -45,12 +45,52 @@
                             </div>
 
                             <div class="card-body text-center align-items-bottom">
-                                <h5 class="h5 font-weight-bold text-white">@item.Name - @item.Creator.ArtistName</h5>
+                                <h5 class="font-weight-bold text-white">@item.Name - @item.Creator.ArtistName</h5>
                                 <p class="mb-0 text-light">@item.Description</p>
 
                                 <audio class="mt-3" controls type="audio/mpeg">
                                     <source src="~/custom/files/audio/@item.AudioURL">
                                 </audio>
+                            </div>
+
+                            <div class="card-footer" style="background-color: #51575c;">
+                                <div class="row">
+                                    @if (User.IsInRole("Creator") && item.Creator.Email.Equals(User.Identity.Name))
+                                    {
+
+                                        @if (item.AlbumId == null)
+                                        {
+                                            <div class="col-6">
+                                                <a class="btn btn-info btn-block" asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@item.Id">Add to album</a>
+                                            </div>
+                                            <div class="col-6">
+                                                <a class="btn btn-danger btn-block" asp-controller="Songs" asp-action="Delete" asp-route-songId="@item.Id">Delete Song</a>
+                                            </div>
+                                        }
+                                        else // if its not in an album
+                                        {
+                                            <div class="col-12">
+                                                <a class="btn btn-danger btn-block" asp-controller="Songs" asp-action="Delete" asp-route-songId="@item.Id">Delete Song</a>
+                                            </div>
+                                        }
+
+                                    }
+                                    else if (User.IsInRole("Creator"))
+                                    {
+                                        <div class="col-12">
+                                            <a class="btn btn-info btn-block" asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@item.Id">Give feedback</a>
+                                        </div>
+                                    }
+                                    else if (User.IsInRole("Listener"))
+                                    {
+                                        <div class="col-6">
+                                            <a class="btn btn-info btn-block" asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@item.Id">Give feedback</a>
+                                        </div>
+                                        <div class="col-6">
+                                            <a class="btn btn-warning btn-block" asp-controller="Songs" asp-action="ReviewSong" asp-route-songId="@item.Id">Give Review</a>
+                                        </div>
+                                    }
+                                </div>
                             </div>
                         </div>
                 </div>

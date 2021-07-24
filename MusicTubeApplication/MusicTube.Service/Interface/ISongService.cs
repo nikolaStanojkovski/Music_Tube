@@ -13,8 +13,17 @@ namespace MusicTube.Service.Interface
     {
         public List<Song> GetAllSongs();
 
+        public Song CreateSong(Creator user, SongDto song, String songURL);
+
+        public Song ReadSong(Guid? songId);
+
+        public Song DeleteSong(Guid? songId);
+
+
         public SongDto GetSongDto(Creator user);
 
-        public Song CreateNewSong(Creator user, SongDto song, String songURL);
+        public SongAlbumDto GetSongAlbumDto(Creator user, Guid? songId);
+
+        public void AddSongToAlbum(SongAlbumDto model);
     }
 }

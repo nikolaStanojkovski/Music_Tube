@@ -1,0 +1,90 @@
+﻿@using Microsoft.Extensions.Options
+@using Microsoft.AspNetCore.Identity
+@using MusicTube.Domain.Identity
+@inject UserManager<MusicTubeUser> UserManager
+@model IEnumerable<MusicTube.Domain.Domain.Album>
+
+@{ 
+    var user = UserManager.GetUserAsync(User).Result;
+}
+
+@if (User.IsInRole("Creator") && ((Creator)user).PremiumPlanId != null) // if is a premium user
+{
+    <div class="row my-5">
+        <div class="col-12">
+            <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
+        </div>
+    </div>
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <table class="table">
+            <thead class="thead-light">
+                <tr>
+                    <th></th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Arranger</th>
+                    <th scope="col">Composer</th>
+                    <th scope="col">Mix & Master Engineer</th>
+                    <th scope="col">Producer</th>
+                    <th scope="col">Genre</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody class="text-light">
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+                    var item = Model.ElementAt(i);
+
+                    <tr class="align-items-center" style="width: 100px; height: 100px;">
+                        <td>
+                            <button type="button" data-toggle="modal" data-target=".bd-example-modal-sm-@i">
+                                <img src="@item.AlbumCoverArt" width="100" height="100" />
+                            </button>
+
+                            <div class="modal fade bd-example-modal-sm-@i" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-dialog-centered">
+                                    <div class="modal-content">
+                                        <img src="@item.AlbumCoverArt" style="width: 700px; height: 700px; margin-left: -215px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="align-middle">@item.AlbumName</td>
+                        <td class="align-middle">@item.AlbumArranger</td>
+                        <td class="align-middle">@item.AlbumComposer</td>
+                        <td class="align-middle">@item.AlbumMixMasterEngineer</td>
+                        <td class="align-middle">@item.AlbumProducer</td>
+                        <td class="align-middle">
+                            @item.AlbumGenre
+                        </td>
+                        <td class="text-center align-middle">
+                            <div class="row">
+                                @if (User.IsInRole("Creator") && item.PremiumUserId.Equals(((Creator)user).PremiumPlanId))
+                                {
+                                    <div class="col-6">
+                                        <a asp-controller="Albums" asp-route-albumId="@item.Id"
+                                           asp-action="ViewSongs" class="btn btn-info btn-block">Songs</a>
+                                    </div>
+                                    <div class="col-6">
+                                        <a asp-controller="Albums" asp-route-albumId="@item.Id"
+                                           asp-action="Delete" class="btn btn-danger btn-block">Delete</a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-12">
+                                        <a asp-controller="Albums" asp-route-albumId="@item.Id"
+                                           asp-action="ViewSongs" class="btn btn-info btn-block">Songs</a>
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

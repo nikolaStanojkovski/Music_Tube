@@ -19,6 +19,8 @@ namespace MusicTube.Repository.Interface
 
         MusicTubeUser ReadUserInformation(string? id); // with included virtual properties
 
+        Listener ReadListenerInformation(string? id); // with included virtual properties
+
         Creator ReadCreatorInformation(string? id);
 
         void UpdateUser(MusicTubeUser entity);

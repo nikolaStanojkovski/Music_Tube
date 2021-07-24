@@ -2,6 +2,7 @@
 using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository.Interface;
 using MusicTube.Service.Interface;
@@ -16,10 +17,16 @@ namespace MusicTube.Service.Implementation
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
+        private readonly IRepository<Review> reviewRepository;
+        private readonly IRepository<PremiumPlan> premiumPlanRepository;
 
-        public UserService(IUserRepository _userRepository)
+        public UserService(IUserRepository _userRepository,
+            IRepository<Review> _reviewRepository,
+            IRepository<PremiumPlan> _premiumPlanRepository)
         {
             this.userRepository = _userRepository;
+            this.reviewRepository = _reviewRepository;
+            this.premiumPlanRepository = _premiumPlanRepository;
         }
 
         public MusicTubeUser CreateNewUser(UserRegistrationDto request)
@@ -87,21 +94,9 @@ namespace MusicTube.Service.Implementation
             return user;
         }
 
-        public UserRegistrationDto GetUserRegistrationDto(UserManager<MusicTubeUser> userManager)
+        public UserRegistrationDto GetUserRegistrationDto(MusicTubeUser user, UserManager<MusicTubeUser> userManager)
         {
-            List<MusicTubeUser> allCreators = userRepository.GetAll();
-            List<Creator> chosenCreators = new List<Creator>();
-            foreach(var artist in allCreators)
-            {
-                foreach(var role in userManager.GetRolesAsync(artist).Result)
-                {
-                    if(role.Equals("Creator"))
-                    {
-                        chosenCreators.Add((Creator)artist);
-                        break;
-                    }
-                }
-            }
+            List<Creator> chosenCreators = GetAllCreators(null, userManager);
 
             return new UserRegistrationDto
             {
@@ -109,14 +104,17 @@ namespace MusicTube.Service.Implementation
             };
         }
 
-        public UserSettingsDto GetUserSettings(MusicTubeUser user)
+        public UserSettingsDto GetUserSettings(MusicTubeUser user, UserManager<MusicTubeUser> userManager)
         {
             UserSettingsDto model = new UserSettingsDto();
             if (user.GetType().Name.Equals("Creator"))
             {
                 user = userRepository.ReadCreatorInformation(user.Id);
+                PremiumPlan premiumPlan = premiumPlanRepository.Read(((Creator)user).PremiumPlanId);
                 model = new UserSettingsDto()
                 {
+                    CurrentUser = user,
+
                     Mail = user.Email,
                     Name = user.Name,
                     Surname = user.Surname,
@@ -124,19 +122,23 @@ namespace MusicTube.Service.Implementation
                     NewsletterSubscribed = user.NewsletterSubscribed,
                     FavouriteGenre = user.FavouriteGenre,
                     FavouriteArtist = user.FavouriteArtist,
+                    FavouriteArtistId = user.FavouriteArtistId,
+                    AllCreators = GetAllCreators(user.Id, userManager),
 
                     ArtistName = ((Creator)user).ArtistName,
                     ArtistDescription = ((Creator)user).ArtistDescription,
-                    PremiumPlan = ((Creator)user).PremiumPlan,
+                    PremiumPlan = premiumPlan,
                     Fans = ((Creator)user).Fans,
                     Content = ((Creator)user).Content,
                     Reviews = null
                 };
             } else
             {
-                user = userRepository.ReadUserInformation(user.Id);
+                user = userRepository.ReadListenerInformation(user.Id);
                 model = new UserSettingsDto()
                 {
+                    CurrentUser = user,
+
                     Mail = user.Email,
                     Name = user.Name,
                     Surname = user.Surname,
@@ -144,6 +146,8 @@ namespace MusicTube.Service.Implementation
                     NewsletterSubscribed = user.NewsletterSubscribed,
                     FavouriteGenre = user.FavouriteGenre,
                     FavouriteArtist = user.FavouriteArtist,
+                    FavouriteArtistId = user.FavouriteArtistId,
+                    AllCreators = GetAllCreators(user.Id, userManager),
 
                     ArtistName = null,
                     ArtistDescription = null,
@@ -157,6 +161,12 @@ namespace MusicTube.Service.Implementation
             return model;
         }
 
+        public void RemoveReview(Guid? reviewId)
+        {
+            Review review = reviewRepository.Read(reviewId);
+            reviewRepository.Delete(review);
+        }
+
         public void UpdateUserPersonalInformation(MusicTubeUser user, UserSettingsDto model)
         {
             if (model.Name != null && !model.Name.Equals(""))
@@ -168,7 +178,109 @@ namespace MusicTube.Service.Implementation
             if (model.ImageURL != null && !model.ImageURL.Equals(""))
                 user.ImageURL = model.ImageURL;
 
+            if (model.NewsletterSubscribed != null)
+                user.NewsletterSubscribed = model.NewsletterSubscribed;
+
+            if (model.FavouriteGenre != null)
+                user.FavouriteGenre = model.FavouriteGenre;
+
+            if(model.FavouriteArtistId != "0")
+            {
+                var favouriteArtist = userRepository.ReadUser(model.FavouriteArtistId);
+                user.FavouriteArtist = (Creator)favouriteArtist;
+                user.FavouriteArtistId = model.FavouriteArtistId;
+            }
+
+            if (model.ArtistName != null && !model.ArtistName.Equals(""))
+                ((Creator)user).ArtistName = model.ArtistName;
+
+            if (model.ArtistDescription != null && !model.ArtistDescription.Equals(""))
+                ((Creator)user).ArtistDescription = model.ArtistDescription;
+
             userRepository.UpdateUser(user);
+        }
+
+        public PremiumDto GetPremiumDto(Creator user)
+        {
+            user = userRepository.ReadCreatorInformation(user.Id);
+
+            PremiumDto model = new PremiumDto()
+            {
+                ArtistName = user.ArtistName,
+                CreatorId = user.Id,
+                Name = user.Name,
+                Surname = user.Surname,
+                Creator = user
+            };
+
+            return model;
+        }
+
+        public void SetPremium(Creator user, Int64 sum)
+        {
+            user = userRepository.ReadCreatorInformation(user.Id);
+            user.PremiumPlan = null;
+            user.PremiumPlanId = Guid.Empty;
+
+            if (user.PremiumPlan != null)
+                premiumPlanRepository.Delete(premiumPlanRepository.ReadAll()
+                    .Where(z => z.CreatorId.Equals(user.Id)).FirstOrDefault());
+
+            SubscriptionPlan subPlan = SubscriptionPlan.BRONZE;
+
+            if (sum == 10)
+                subPlan = SubscriptionPlan.BRONZE;
+            else if (sum == 20)
+                subPlan = SubscriptionPlan.SILVER;
+            else if (sum == 50)
+                subPlan = SubscriptionPlan.GOLD;
+            else if (sum == 150)
+                subPlan = SubscriptionPlan.DIAMOND;
+
+            PremiumPlan premiumPlan = new PremiumPlan()
+            {
+                Id = Guid.NewGuid(),
+
+                SubscriptionPlan = subPlan,
+                Creator = user,
+                CreatorId = user.Id,
+                Albums = new List<Album>()
+            };
+
+            user.PremiumPlan = premiumPlan;
+            user.PremiumPlanId = premiumPlan.Id;
+
+            premiumPlanRepository.Create(premiumPlan);
+            userRepository.UpdateUser(user);
+        }
+
+        private List<Creator> GetAllCreators(string userId, UserManager<MusicTubeUser> userManager)
+        {
+            List<MusicTubeUser> allCreators = userRepository.GetAll();
+            List<Creator> chosenCreators = new List<Creator>();
+            foreach (var artist in allCreators)
+            {
+                foreach (var role in userManager.GetRolesAsync(artist).Result)
+                {
+                    if (role.Equals("Creator"))
+                    { // not putting the current user in the list
+                        if(userId != null)
+                        {
+                            if(!userId.Equals(artist.Id))
+                            {
+                                chosenCreators.Add((Creator)artist);
+                                break;
+                            }
+                        } else
+                        {
+                            chosenCreators.Add((Creator)artist);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return chosenCreators;
         }
     }
 }

@@ -7,16 +7,31 @@
 <ul class="navbar-nav bg-dark">
     @if (SignInManager.IsSignedIn(User))
     {
-        var user = UserManager.GetUserAsync(User).Result;
-
-        if (((Creator)user).PremiumPlan == null)
+        var user = new MusicTubeUser();
+        if (User.IsInRole("Creator"))
         {
-            <li class="nav-item align-content-center mt-2 mr-2">
-                <a class="btn btn-outline-warning" asp-controller="Account" asp-action="PremiumPlan">
-                    Get Premium Now
-                </a>
-            </li>
+            user = (Creator)UserManager.GetUserAsync(User).Result;
+            if (((Creator)user).PremiumPlanId == null)
+            {
+                <li class="nav-item align-content-center mt-2 mr-2">
+                    <a class="btn btn-outline-warning" asp-controller="Account" asp-action="PremiumPlan">
+                        Get Premium Now
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="nav-item align-content-center mt-2 mr-2">
+                    <a class="btn btn-outline-warning" asp-controller="Account" asp-action="PremiumPlan">
+                        Subscribed
+                    </a>
+                </li>
+            }
+        } else
+        {
+            user = (Listener)UserManager.GetUserAsync(User).Result;
         }
+
 
         <li class="nav-item">
             <a class="nav-link text-white" asp-controller="Account" asp-action="Settings">

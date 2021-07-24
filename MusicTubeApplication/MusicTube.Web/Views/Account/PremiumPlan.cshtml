@@ -1,0 +1,120 @@
+﻿@using Microsoft.Extensions.Options
+@inject IOptions<MusicTube.Domain.DTO.StripeSettingsDTO> Stripe
+@model MusicTube.Domain.DTO.PremiumDto
+
+@{
+    ViewData["Title"] = "Set Premium plan to user";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <title>Create Song - Music Tube</title>
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#fee").val("10 $");
+
+        $("#subPlan").change(function () {
+
+            var value = $("#subPlan option:selected").val();
+            if (value == 0) {
+                $("#fee").val("10 $");
+                $("#sum").val(10);
+                $("#showFeatures").html("Bronze subscription plan offers 2 published albums");
+            } else if (value == 1) {
+                $("#fee").val("20 $");
+                $("#sum").val(20);
+                $("#showFeatures").html("Silver subscription plan offers 5 published albums");
+            } else if (value == 2) {
+                $("#fee").val("50 $");
+                $("#sum").val(50);
+                $("#showFeatures").html("Gold subscription plan offers 15 published albums");
+            } else {
+                $("#fee").val("150 $");
+                $("#sum").val(150);
+                $("#showFeatures").html("Diamond subscription plan offers unlimited published albums");
+            }
+
+        });
+
+    })
+
+</script>
+
+<h2 class="my-5">Set Premium Plan for @Model.Name @Model.Surname</h2>
+
+<hr />
+
+<div class="row mb-5">
+    <div class="col-12 mb-3">
+
+        <div class="form-group">
+            <label asp-for="@Model.Name"></label>
+            <input disabled asp-for="@Model.Name" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.Surname"></label>
+            <input disabled asp-for="@Model.Surname" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <label asp-for="@Model.ArtistName"></label>
+            <input disabled asp-for="@Model.ArtistName" class="form-control" />
+        </div>
+
+        <hr class="text-center text-info w-100 mt-4" />
+
+        <h4 class="font-weight-normal text-warning mb-4">Premium Subscription Plan</h4>
+
+        <div class="form-group">
+            <div class="mb-2">
+                <select id="subPlan" class="form-control" asp-for="@Model.SubscriptionPlan" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.SubscriptionPlan>()">
+                </select>
+                @Html.ValidationMessageFor(m => m.SubscriptionPlan)
+            </div>
+            <p id="showFeatures" class="text-info ml-2"></p>
+        </div>
+
+        <h6 class="font-weight-normal text-warning mb-4">Fee</h6>
+        <div class="form-group">
+            <input id="fee" disabled value="0" class="form-control" />
+        </div>
+
+        <div class="form-group mt-5">
+            <form asp-controller="Account" asp-action="PayPremiumPlan" method="post">
+                <input id="sum" name="sum" hidden value="10" />
+                <article>
+                    <a>
+                        <script id="scriptStripe" src="https://checkout.stripe.com/checkout.js"
+                                class="stripe-button"
+                                data-key="@Stripe.Value.PublishableKey"
+                                data-locale="en"
+                                data-description="EShop Application Payment"
+                                data-amount=""
+                                data-label="Subscribe">
+                        </script>
+                    </a>
+                </article>
+            </form>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-info my-4">Back</a>
+    </div>
+</div>

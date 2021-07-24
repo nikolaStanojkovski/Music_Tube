@@ -6,8 +6,7 @@
 }
 
 <head>
-    <meta charset="UTF-8">
-    <title>Register - Healthy Diet</title>
+    <title>Create Song - Music Tube</title>
 
     <!--    JQuery Import   -->
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
@@ -131,23 +130,11 @@
                     @Html.ValidationMessageFor(m => m.Genre)
                 </div>
             </div>
-            @if (Model.Creator.PremiumPlan != null)
-        {
-            <h4 class="mb-2" style="color:orange;">Premium features</h4>
+
             <br />
-            <hr class="text-secondary w-100" />
             <br />
             <div class="form-group col-12">
-                <div class="form-group col-12 mb-4">
-                    @Html.DropDownListFor(z => z.AlbumId,
-                                new SelectList(Model.AllAlbums, "Id", "ArtistName"), "Select the album you want the song to appear on",
-                                new { @class = "form-control" });
-                </div>
-            </div>
-        }
-            <br />
-            <div class="form-group col-12">
-                <input type="submit" class="btn btn-block btn-primary" />
+                <button type="submit" class="btn btn-block btn-primary">Submit</button>
             </div>
         </form>
         <div class="col-12 mt-4 mb-5">

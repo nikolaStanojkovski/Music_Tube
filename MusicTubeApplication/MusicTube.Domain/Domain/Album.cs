@@ -15,6 +15,9 @@ namespace MusicTube.Domain.Domain
         [Display(Name = "Album Name")]
         public String AlbumName { get; set; }
         [Required]
+        [Display(Name = "Album Cover Art URL")]
+        public String AlbumCoverArt { get; set; }
+        [Required]
         [Display(Name = "Album Producer Name")]
         public String AlbumProducer { get; set; }
         [Required]

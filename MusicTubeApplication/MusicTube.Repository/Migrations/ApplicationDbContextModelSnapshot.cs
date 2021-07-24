@@ -168,6 +168,10 @@ namespace MusicTube.Repository.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("AlbumCoverArt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("AlbumGenre")
                         .HasColumnType("int");
 
@@ -410,7 +414,7 @@ namespace MusicTube.Repository.Migrations
                 {
                     b.HasBaseType("MusicTube.Domain.Domain.Media");
 
-                    b.Property<Guid>("AlbumId")
+                    b.Property<Guid?>("AlbumId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AudioURL")
@@ -598,8 +602,7 @@ namespace MusicTube.Repository.Migrations
                     b.HasOne("MusicTube.Domain.Domain.Album", "Album")
                         .WithMany("Songs")
                         .HasForeignKey("AlbumId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Album");
                 });

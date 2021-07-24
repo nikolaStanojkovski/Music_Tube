@@ -7,12 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MusicTube.Domain.DTO;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
 using MusicTube.Repository.Implementation;
 using MusicTube.Repository.Interface;
 using MusicTube.Service.Implementation;
 using MusicTube.Service.Interface;
+using Stripe;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,11 +55,20 @@ namespace MusicTube.Web
 
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<ISongService, SongService>();
+            services.AddTransient<IAlbumService, AlbumService>();
+
+            // Payment provider settings
+
+            services.Configure<StripeSettingsDTO>(Configuration.GetSection("Stripe"));
+
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            StripeConfiguration.SetApiKey(Configuration.GetSection("Stripe")["SecretKey"]);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

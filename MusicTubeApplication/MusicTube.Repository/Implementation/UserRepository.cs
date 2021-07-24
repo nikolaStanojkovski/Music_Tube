@@ -41,12 +41,25 @@ namespace MusicTube.Repository.Implementation
                 .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;
         }
 
+        public Listener ReadListenerInformation(string id)
+        {
+            return (Listener)entities
+                .Include(z => z.FavouriteArtist)
+                .Include(z => z.Feedbacks)
+                .Include(z => ((Listener)z).Reviews)
+                .Include("Reviews.Media")
+                .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;
+        }
+
         public Creator ReadCreatorInformation(string id)
         {
-            return (Creator) entities
+            return (Creator)entities
                 .Include(z => z.FavouriteArtist)
                 .Include(z => z.Feedbacks)
                 .Include(z => ((Creator)z).Fans)
+                .Include(z => ((Creator)z).Content)
+                .Include(z => ((Creator)z).PremiumPlan)
+                .Include("Content.Reviews")
                 .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;
         }
 

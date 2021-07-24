@@ -15,7 +15,7 @@ namespace MusicTube.Domain.Domain.Subdomain
         [Required]
         public String Description { get; set; }
         [Required]
-        [Range(0, 10)]
+        [Range(1, 5)]
         public Double Rating { get; set; }
 
         public string ListenerId { get; set; }

@@ -33,12 +33,11 @@ namespace MusicTube.Web.Controllers
         }
 
         // GET: Songs
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
             return View(songService.GetAllSongs());
         }
 
-        // GET: Songs/Create
         public async Task<IActionResult> Create()
         {
             var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
@@ -46,9 +45,6 @@ namespace MusicTube.Web.Controllers
             return View(song);
         }
 
-        // POST: Songs/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         public async Task<IActionResult> Create([Bind("Name,Label,AlbumId,Description,Genre")] SongDto song, IFormFile songToUpload)
         {
@@ -64,122 +60,43 @@ namespace MusicTube.Web.Controllers
                     fileStream.Flush();
                 }
 
-                songService.CreateNewSong(user, song, fileName);
+                songService.CreateSong(user, song, fileName);
 
                 return RedirectToAction("Index", "Songs");
             }
             return View(song);
         }
 
-        // GET: Songs/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var song = await _context.Songs.FindAsync(id);
-            if (song == null)
-            {
-                return NotFound();
-            }
-            ViewData["CreatorId"] = new SelectList(_context.Set<Creator>(), "Id", "Id", song.CreatorId);
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumArranger", song.AlbumId);
-            return View(song);
-        }
-
-        // POST: Songs/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Length,AudioQuality,AudioSampleRate,AudioURL,AlbumId,Name,Description,Label,Genre,CreatorId,Id")] Song song)
-        {
-            if (id != song.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(song);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SongExists(song.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CreatorId"] = new SelectList(_context.Set<Creator>(), "Id", "Id", song.CreatorId);
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumArranger", song.AlbumId);
-            return View(song);
-        }
-
         // GET: Songs/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public IActionResult Details(Guid? songId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var song = await _context.Songs
-                .Include(s => s.Creator)
-                .Include(s => s.Album)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (song == null)
-            {
-                return NotFound();
-            }
+            Song song = songService.ReadSong(songId);
 
             return View(song);
         }
 
         // GET: Songs/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+        public IActionResult Delete(Guid? songId)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            songService.DeleteSong(songId);
 
-            var song = await _context.Songs
-                .Include(s => s.Creator)
-                .Include(s => s.Album)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (song == null)
-            {
-                return NotFound();
-            }
-
-            return View(song);
+            return RedirectToAction("Index", "Songs");
         }
 
-        // POST: Songs/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> AddSongToAlbum(Guid? songId)
         {
-            var song = await _context.Songs.FindAsync(id);
-            _context.Songs.Remove(song);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+            SongAlbumDto model = songService.GetSongAlbumDto((Creator)user, songId);
+
+            return View(model);
         }
 
-        private bool SongExists(Guid id)
+        [HttpPost]
+        public IActionResult AddSongToAlbum([Bind("SongId,AlbumId")] SongAlbumDto model)
         {
-            return _context.Songs.Any(e => e.Id == id);
+            songService.AddSongToAlbum(model);
+
+            return RedirectToAction("Index", "Songs");
         }
     }
 }
