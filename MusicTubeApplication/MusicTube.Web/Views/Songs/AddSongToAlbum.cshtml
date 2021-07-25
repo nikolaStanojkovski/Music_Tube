@@ -37,9 +37,9 @@
             <hr class="text-center text-info w-100 mt-4" />
 
             <div class="form-group">
-                <label>Album</label>
+                <h5 class="text-warning mb-3">Album</h5>
                 @Html.DropDownListFor(z => z.AlbumId,
-                                new SelectList(Model.AllAlbums, "Id", "ArtistName"),
+                                new SelectList(Model.AllAlbums, "Id", "AlbumName"),
                                 "Select the album you want the song to appear on",
                                 new { @class = "form-control" })
             </div>

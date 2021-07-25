@@ -10,14 +10,36 @@
 
 @if (User.IsInRole("Creator") && ((Creator)user).PremiumPlanId != null) // if is a premium user
 {
-    <div class="row my-5">
+    <div class="row mt-5 mb-2">
         <div class="col-12">
             <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
         </div>
     </div>
+    <div class="row">
+        <div class="col-12">
+            <p class="text-danger">@ViewBag.error</p>
+        </div>
+    </div>
 }
 
-<div class="container mt-5">
+<head>
+    <meta charset="UTF-8">
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<div class="container my-5">
     <div class="row">
         <table class="table">
             <thead class="thead-light">
@@ -59,17 +81,21 @@
                         <td class="align-middle">
                             @item.AlbumGenre
                         </td>
-                        <td class="text-center align-middle">
+                        <td class="align-middle text-center">
                             <div class="row">
                                 @if (User.IsInRole("Creator") && item.PremiumUserId.Equals(((Creator)user).PremiumPlanId))
                                 {
-                                    <div class="col-6">
+                                    <div class="col-7">
                                         <a asp-controller="Albums" asp-route-albumId="@item.Id"
-                                           asp-action="ViewSongs" class="btn btn-info btn-block">Songs</a>
+                                                asp-action="ViewSongs" class="btn btn-info btn-block">
+                                            Songs
+                                        </a>
                                     </div>
-                                    <div class="col-6">
+                                    <div class="col-5">
                                         <a asp-controller="Albums" asp-route-albumId="@item.Id"
-                                           asp-action="Delete" class="btn btn-danger btn-block">Delete</a>
+                                           asp-action="Delete" class="btn btn-danger btn-block">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
                                     </div>
                                 }
                                 else
@@ -88,3 +114,4 @@
     </div>
 
 </div>
+<div class="mb-5"></div>

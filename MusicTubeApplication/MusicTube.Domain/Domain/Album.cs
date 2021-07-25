@@ -34,8 +34,9 @@ namespace MusicTube.Domain.Domain
         public Genre AlbumGenre { get; set; }
 
         public Guid PremiumUserId { get; set; }
-        [Required]
         public virtual PremiumPlan PremiumUser { get; set; }
+
+        public Boolean IsFromCurrentPlan { get; set; } // to check whether its from current premium plan
 
         public virtual List<Song> Songs { get; set; }
     }

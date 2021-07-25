@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MusicTube.Domain.Domain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
 using MusicTube.Service.Interface;
@@ -21,21 +22,33 @@ namespace MusicTube.Web.Controllers
         private readonly ApplicationDbContext _context;
 
         private readonly ISongService songService;
+        private readonly IAlbumService albumService;
         private readonly UserManager<MusicTubeUser> userManager;
 
         public SongsController(ApplicationDbContext context,
             ISongService _songService,
+            IAlbumService _albumService,
             UserManager<MusicTubeUser> _userManager)
         {
             _context = context;
             this.songService = _songService;
             this.userManager = _userManager;
+            this.albumService = _albumService;
         }
 
         // GET: Songs
-        public IActionResult Index()
+        public IActionResult Index(Guid? albumId)
         {
-            return View(songService.GetAllSongs());
+            if (albumId == null)
+                return View(songService.GetAllSongs());
+            else
+            {
+                List<Song> songs = albumService.GetSongsForAlbum(albumId);
+                if (songs.Count == 0)
+                    ViewBag.error = "The selected album still doesn't have any songs in it.";
+
+                return View(songs);
+            }
         }
 
         public async Task<IActionResult> Create()
@@ -46,6 +59,7 @@ namespace MusicTube.Web.Controllers
         }
 
         [HttpPost]
+        [DisableRequestSizeLimit]
         public async Task<IActionResult> Create([Bind("Name,Label,AlbumId,Description,Genre")] SongDto song, IFormFile songToUpload)
         {
             if (ModelState.IsValid && songToUpload != null)
@@ -97,6 +111,34 @@ namespace MusicTube.Web.Controllers
             songService.AddSongToAlbum(model);
 
             return RedirectToAction("Index", "Songs");
+        }
+
+        public IActionResult GiveFeedback(Boolean liking, Guid songId, String comment)
+        {
+            var user = userManager.FindByEmailAsync(User.Identity.Name).Result;
+            songService.UpdateFeedbackForSong(user, liking, songId, comment);
+
+            return RedirectToAction("Index", "Songs");
+        }
+
+        public IActionResult GiveReview(Guid songId, String summary, String description, String rating)
+        {
+            var user = (Listener) userManager.FindByEmailAsync(User.Identity.Name).Result;
+            songService.UpdateReviewForSong(user, songId, summary, description, rating);
+
+            return RedirectToAction("Index", "Songs");
+        }
+
+        public IActionResult FilterSongs(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)
+        {
+            List<Song> songs = songService.FilterSongs(genreFilter, nameFilter, descriptionFilter, labelFilter);
+            return View("Index", songs);
+        }
+
+        public IActionResult SearchSongs(String text)
+        {
+            List<Song> songs = songService.SearchSongs(text);
+            return View("Index", songs);
         }
     }
 }

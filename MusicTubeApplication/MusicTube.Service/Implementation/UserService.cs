@@ -219,12 +219,6 @@ namespace MusicTube.Service.Implementation
         public void SetPremium(Creator user, Int64 sum)
         {
             user = userRepository.ReadCreatorInformation(user.Id);
-            user.PremiumPlan = null;
-            user.PremiumPlanId = Guid.Empty;
-
-            if (user.PremiumPlan != null)
-                premiumPlanRepository.Delete(premiumPlanRepository.ReadAll()
-                    .Where(z => z.CreatorId.Equals(user.Id)).FirstOrDefault());
 
             SubscriptionPlan subPlan = SubscriptionPlan.BRONZE;
 
@@ -237,20 +231,33 @@ namespace MusicTube.Service.Implementation
             else if (sum == 150)
                 subPlan = SubscriptionPlan.DIAMOND;
 
-            PremiumPlan premiumPlan = new PremiumPlan()
+            if (user.PremiumPlan != null)
             {
-                Id = Guid.NewGuid(),
+                PremiumPlan premium = premiumPlanRepository.Read(user.PremiumPlanId);
+                foreach (var album in user.PremiumPlan.Albums)
+                    album.IsFromCurrentPlan = false; // making all previous added albums false, so we can count only the ones in this premium plan
 
-                SubscriptionPlan = subPlan,
-                Creator = user,
-                CreatorId = user.Id,
-                Albums = new List<Album>()
-            };
+                premium.SubscriptionPlan = subPlan;
 
-            user.PremiumPlan = premiumPlan;
-            user.PremiumPlanId = premiumPlan.Id;
+                premiumPlanRepository.Update(premium);
+            } else
+            {
+                PremiumPlan premiumPlan = new PremiumPlan()
+                {
+                    Id = Guid.NewGuid(),
 
-            premiumPlanRepository.Create(premiumPlan);
+                    SubscriptionPlan = subPlan,
+                    Creator = user,
+                    CreatorId = user.Id,
+                    Albums = new List<Album>()
+                };
+
+                user.PremiumPlan = premiumPlan;
+                user.PremiumPlanId = premiumPlan.Id;
+
+                premiumPlanRepository.Create(premiumPlan);
+            }
+
             userRepository.UpdateUser(user);
         }
 

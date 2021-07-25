@@ -1,6 +1,7 @@
 ﻿using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository.Interface;
 using MusicTube.Service.Interface;
@@ -18,14 +19,20 @@ namespace MusicTube.Service.Implementation
         private readonly IUserRepository userRepository;
         private readonly ISongRepository songRepository;
         private readonly IRepository<Album> albumRepository;
+        private readonly IRepository<UserFeedback> feedbackRepository;
+        private readonly IRepository<Review> reviewRepository;
 
         public SongService(ISongRepository _songRepository,
             IRepository<Album> _albumRepository,
-            IUserRepository _userRepository)
+            IUserRepository _userRepository,
+            IRepository<UserFeedback> _feedbackRepository,
+            IRepository<Review> _reviewRepository)
         {
             this.songRepository = _songRepository;
             this.userRepository = _userRepository;
             this.albumRepository = _albumRepository;
+            this.feedbackRepository = _feedbackRepository;
+            this.reviewRepository = _reviewRepository;
         }
 
         public List<Song> GetAllSongs()
@@ -120,7 +127,7 @@ namespace MusicTube.Service.Implementation
             songRepository.DeleteSong(songToDelete);
 
             string rootFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\files\\audio";
-            File.Delete(Path.Combine(rootFolder, songToDelete.AudioURL));
+            File.Delete(Path.Combine(rootFolder, songToDelete.AudioURL)); // delete the file with the song in it
 
             return songToDelete;
         }
@@ -146,9 +153,126 @@ namespace MusicTube.Service.Implementation
             Album album = albumRepository.Read(model.AlbumId);
             if(album != null)
             {
-                album.Songs.Add(songToAdd);
+                songToAdd.Album = album;
+                songToAdd.AlbumId = album.Id;
+
+                songRepository.UpdateSong(songToAdd);
                 albumRepository.Update(album);
             }
+        }
+
+        public void UpdateFeedbackForSong(MusicTubeUser user, bool liking, Guid songId, string comment)
+        {
+            user = userRepository.ReadUserInformation(user.Id);
+            Song song = songRepository.ReadSong(songId);
+            
+            UserFeedback existingFeedback = feedbackRepository.ReadAll().Where(z => z.MediaId.Equals(songId) && z.UserId.Equals(user.Id)).SingleOrDefault();
+            if (existingFeedback != null)
+            {
+                existingFeedback.IsLiked = liking;
+                existingFeedback.IsDisliked = !liking;
+                existingFeedback.Comment = comment;
+
+                feedbackRepository.Update(existingFeedback);
+            } else
+            {
+                UserFeedback newFeedback = new UserFeedback()
+                {
+                    Id = Guid.NewGuid(),
+
+                    IsLiked = liking,
+                    IsDisliked = !liking,
+                    Comment = comment,
+
+                    User = user,
+                    UserId = user.Id,
+                    Media = song,
+                    MediaId = song.Id
+                };
+                user.Feedbacks.Add(newFeedback);
+
+                feedbackRepository.Create(newFeedback);
+            }
+
+            userRepository.UpdateUser(user);
+            songRepository.UpdateSong(song);
+        }
+
+        public void UpdateReviewForSong(Listener user, Guid songId, string summary, string description, string rating)
+        {
+            user = userRepository.ReadListenerInformation(user.Id);
+            Song song = songRepository.ReadSong(songId);
+
+            Review existingReview = reviewRepository.ReadAll().Where(z => z.MediaId.Equals(songId) 
+                    && z.ListenerId.Equals(user.Id)).SingleOrDefault();
+            if (existingReview != null)
+            {
+                existingReview.Summary = summary;
+                existingReview.Description = description;
+                existingReview.Rating = Int64.Parse(rating);
+
+                reviewRepository.Update(existingReview);
+            }
+            else
+            {
+                Review newReview = new Review()
+                {
+                    Id = Guid.NewGuid(),
+
+                    Summary = summary,
+                    Description = description,
+                    Rating = Int64.Parse(rating),
+
+                    Listener = user,
+                    ListenerId = user.Id,
+                    Media = song,
+                    MediaId = song.Id
+                };
+                user.Reviews.Add(newReview);
+
+                reviewRepository.Create(newReview);
+            }
+
+            userRepository.UpdateUser(user);
+            songRepository.UpdateSong(song);
+        }
+
+        public List<Song> SearchSongs(string text)
+        {
+            List<Song> allSongs = GetAllSongs();
+            List<Song> filteredSongs = new List<Song>();
+
+            if (allSongs.Where(z => z.Name.Contains(text)).Count() != 0)
+                filteredSongs.AddRange(allSongs.Where(z => z.Name.Contains(text)).ToList());
+            // name
+
+            if (allSongs.Where(z => z.Description.Contains(text)).Count() != 0)
+                filteredSongs.AddRange(allSongs.Where(z => z.Description.Contains(text)
+                && filteredSongs.Where(t => t.Id.Equals(z.Id)).Count() == 0).ToList());
+            // description
+
+            if (allSongs.Where(z => z.Label.Contains(text)).Count() != 0)
+                filteredSongs.AddRange(allSongs.Where(z => z.Label.Contains(text)
+                && filteredSongs.Where(t => t.Id.Equals(z.Id)).Count() == 0).ToList());
+            // label
+
+            if (allSongs.Where(z => z.Genre.Equals(text)).Count() != 0)
+                filteredSongs.AddRange(allSongs.Where(z => z.Genre.Equals(text)
+                && filteredSongs.Where(t => t.Id.Equals(z.Id)).Count() == 0).ToList());
+            // genre
+
+            return filteredSongs;
+        }
+
+        public List<Song> FilterSongs(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)
+        {
+            List<Song> allSongs = GetAllSongs();
+            List<Song> filteredSongs = new List<Song>();
+
+           /*  filteredSongs.AddRange(allSongs.Where(z => z.Name.Contains(nameFilter) &&
+                    ).ToList()); */
+
+            return filteredSongs;
         }
     }
 }

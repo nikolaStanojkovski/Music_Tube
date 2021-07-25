@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MusicTube.Domain.Domain;
 using MusicTube.Domain.DTO;
 using MusicTube.Domain.Identity;
 using MusicTube.Service.Interface;
@@ -22,16 +23,20 @@ namespace MusicTube.Web.Controllers
             this.userManager = _userManager;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string error = "")
         {
+            ViewBag.error = error;
             return View(albumService.GetAllAlbums());
         }
 
         public IActionResult Create()
         {
             var user = userManager.FindByEmailAsync(User.Identity.Name).Result;
-
-            return View(albumService.GetAlbumDto((Creator)user));
+            
+            if (albumService.CheckAlbumLimit((Creator)user))
+                return RedirectToAction("Index", new { error = "Sorry, your album creation limit is reached, make a subscription again to enable album creation again." });
+            else
+                return View(albumService.GetAlbumDto((Creator)user));
         }
 
         [HttpPost]
@@ -52,7 +57,7 @@ namespace MusicTube.Web.Controllers
 
         public IActionResult ViewSongs(Guid? albumId)
         {
-            return null;
+            return RedirectToAction("Index", "Songs", new { albumId = albumId });
         }
     }
 }

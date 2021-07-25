@@ -25,6 +25,8 @@ namespace MusicTube.Repository.Implementation
             return entities
                 .Include(z => z.Creator)
                 .Include(z => z.Feedbacks)
+                .Include(z => z.Reviews)
+                .Include(z => z.Album)
                 .ToListAsync().Result;
         }
 

@@ -59,6 +59,7 @@ namespace MusicTube.Repository.Implementation
                 .Include(z => ((Creator)z).Fans)
                 .Include(z => ((Creator)z).Content)
                 .Include(z => ((Creator)z).PremiumPlan)
+                .Include("PremiumPlan.Albums")
                 .Include("Content.Reviews")
                 .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;
         }

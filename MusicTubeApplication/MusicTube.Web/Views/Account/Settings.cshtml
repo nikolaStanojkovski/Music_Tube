@@ -168,83 +168,129 @@
             <hr class="w-100 my-4" style="height: 3px; color: white;" />
 
             <!-- Creator Specific Information -->
-            <form asp-action="SettingsCreatorInfo" asp-controller="Account" method="post">
+    <form asp-action="SettingsCreatorInfo" asp-controller="Account" method="post">
 
-                <div class="row form-group mb-4 text-secondary">
-                    <div class="col-3 text-right">
-                        <b>Artist Name</b>
+        <div class="row form-group mb-4 text-secondary">
+            <div class="col-3 text-right">
+                <b>Artist Name</b>
+            </div>
+            <div class="col-9">
+                <input asp-for="ArtistName" class="form-control" />
+                <span asp-validation-for="ArtistName" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row form-group mb-4">
+            <div class="col-3 text-right text-secondary">
+                <b>Artist Description</b>
+            </div>
+            <div class="col-9">
+                <textarea rows="5" asp-for="ArtistDescription" class="form-control"></textarea>
+                <span asp-validation-for="ArtistDescription" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row form-group mb-2 mt-3 text-secondary">
+            <div class="col-3 text-right">
+                <b>Premium Plan</b>
+            </div>
+            <div class="col-9">
+                @{ 
+                    var isLimited = false;
+                }
+                @if (((Creator)Model.CurrentUser).PremiumPlanId == null)
+                {
+                    <div class="row">
+                        <div class="col-6 text-left">
+                            <span class="text-danger">You still haven't selected a premium plan</span>
+                        </div>
+                        <div class="col-6 text-left">
+                            <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
+                                Get Premium Now
+                            </a>
+                        </div>
                     </div>
-                    <div class="col-9">
-                        <input asp-for="ArtistName" class="form-control" />
-                        <span asp-validation-for="ArtistName" class="text-danger"></span>
-                    </div>
+                }
+                else
+                {
+            <div class="row">
+                <div class="col-6 text-left">
+                    <span class="text-warning">Your current premium plan is <b>@Model.PremiumPlan.SubscriptionPlan</b></span>
                 </div>
+                @{
+                    var noAlbums = 0;
+                    var infinite = false;
+                    var currentAlbums = Model.PremiumPlan.Albums.Where(z => z.IsFromCurrentPlan == true).Count();
+                    if (Model.PremiumPlan.SubscriptionPlan == MusicTube.Domain.Enumerations.SubscriptionPlan.BRONZE)
+                        noAlbums = 2 - currentAlbums;
+                    else if (Model.PremiumPlan.SubscriptionPlan == MusicTube.Domain.Enumerations.SubscriptionPlan.SILVER)
+                        noAlbums = 5 - currentAlbums;
+                    else if (Model.PremiumPlan.SubscriptionPlan == MusicTube.Domain.Enumerations.SubscriptionPlan.GOLD)
+                        noAlbums = 15 - currentAlbums;
+                    else if (Model.PremiumPlan.SubscriptionPlan == MusicTube.Domain.Enumerations.SubscriptionPlan.DIAMOND)
+                        infinite = true;
 
-                <div class="row form-group mb-4">
-                    <div class="col-3 text-right text-secondary">
-                        <b>Artist Description</b>
-                    </div>
-                    <div class="col-9">
-                        <textarea rows="5" asp-for="ArtistDescription" class="form-control"></textarea>
-                        <span asp-validation-for="ArtistDescription" class="text-danger"></span>
-                    </div>
+                    if (noAlbums <= 0)
+                    {
+                        isLimited = true;
+                        noAlbums = 0;
+                    }
+
+                    if (infinite)
+                    {
+                        <div class="col-6 text-left">
+                            <p class="text-warning">
+                                You have <b>infinite</b> album uploads left
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-6 text-left">
+                            <p class="text-warning">
+                                You have <b>@noAlbums</b> album uploads left
+                            </p>
+                        </div>
+                    }
+                }
+            </div>
+                }
+            </div>
+        </div>
+
+        @if (Model.PremiumPlan.SubscriptionPlan != MusicTube.Domain.Enumerations.SubscriptionPlan.DIAMOND && isLimited == true)
+        {
+            <div class="row">
+                <div class="col-3"></div>
+                <div class="col-9 mb-4 text-left">
+                    <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
+                        Get a better Premium Plan Tier
+                    </a>
                 </div>
+            </div>
+        }
 
-                <div class="row form-group mb-4 mt-3 text-secondary">
-                    <div class="col-3 text-right">
-                        <b>Premium Plan</b>
-                    </div>
-                    <div class="col-9">
-                        @if (((Creator)Model.CurrentUser).PremiumPlanId == null)
-                        {
-                            <div class="row">
-                                <div class="col-6 text-left">
-                                    <span class="text-danger">You still haven't selected a premium plan</span>
-                                </div>
-                                <div class="col-6 text-left">
-                                    <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
-                                        Get Premium Now
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="row">
-                                <div class="col-6 text-left">
-                                    <span class="text-warning">Your current premium plan is <b>@Model.PremiumPlan.SubscriptionPlan</b></span>
-                                </div>
-                                <div class="col-6 text-left">
-                                    <a class="btn btn-outline-warning btn-block" asp-controller="Account" asp-action="PremiumPlan">
-                                        Get a better Premium Plan Tier
-                                    </a>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
+        <div class="row form-group mb-5">
+            <div class="col-3 text-right text-secondary">
+                <b>Fans</b>
+            </div>
+            <div class="col-9">
+                <span class="text-light">
+                    You have a total of <b class="text-light font-weight-bold">@(((Creator)Model.CurrentUser).Fans.Count)</b> fans
+                </span>
+            </div>
+        </div>
 
-                <div class="row form-group mb-5">
-                    <div class="col-3 text-right text-secondary">
-                        <b>Fans</b>
-                    </div>
-                    <div class="col-9">
-                        <span class="text-light">
-                            You have a total of <b class="text-light font-weight-bold">@(((Creator)Model.CurrentUser).Fans.Count)</b> fans
-                        </span>
-                    </div>
-                </div>
+        <div class="row form-group mb-5">
+            <div class="col-3">
 
-                <div class="row form-group mb-5">
-                    <div class="col-3">
+            </div>
+            <div class="col-9">
+                <button class="btn btn-info btn-block" type="submit">Change</button>
+            </div>
+        </div>
 
-                    </div>
-                    <div class="col-9">
-                        <button class="btn btn-info btn-block" type="submit">Change</button>
-                    </div>
-                </div>
-
-            </form>
+    </form>
 
             <!-- Media Content Information -->
             <h4 class="mt-1 text-light">Media Content</h4>

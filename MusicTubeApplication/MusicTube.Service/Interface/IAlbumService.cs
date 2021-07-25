@@ -20,5 +20,9 @@ namespace MusicTube.Service.Interface
         public Album AddNewAlbum(Creator user, AlbumDto model);
 
         public Album DeleteAlbum(Guid? albumId);
+
+        public Boolean CheckAlbumLimit(Creator user);
+
+        public List<Song> GetSongsForAlbum(Guid? albumId);
     }
 }
