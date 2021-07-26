@@ -4,13 +4,43 @@
 @inject UserManager<MusicTubeUser> UserManager
 @model IEnumerable<MusicTube.Domain.Domain.Album>
 
-@{ 
+@{
     var user = UserManager.GetUserAsync(User).Result;
 }
 
+<div class="row my-5">
+    <div class="col-12">
+        <form asp-controller="Albums" asp-action="ExportAllAlbums" method="post">
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        Export All Albums
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <form asp-controller="Albums" asp-action="ExportAlbumsByGenre" method="post">
+            <div class="row mt-3">
+                <div class="col-6">
+                    <select class="form-control" id="genre" name="genre" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.Genre>()">
+                    </select>
+                </div>
+                <div class="col-6">
+                    <button type="submit" class="btn btn-info btn-block">
+                        Export Albums by Genre
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
 @if (User.IsInRole("Creator") && ((Creator)user).PremiumPlanId != null) // if is a premium user
 {
-    <div class="row mt-5 mb-2">
+    <div class="mt-1 mb-5" style="background-color: white; height: 1px;"></div>
+
+    <div class="row mt-3">
         <div class="col-12">
             <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
         </div>
@@ -21,6 +51,7 @@
         </div>
     </div>
 }
+
 
 <head>
     <meta charset="UTF-8">
@@ -87,7 +118,7 @@
                                 {
                                     <div class="col-7">
                                         <a asp-controller="Albums" asp-route-albumId="@item.Id"
-                                                asp-action="ViewSongs" class="btn btn-info btn-block">
+                                           asp-action="ViewSongs" class="btn btn-info btn-block">
                                             Songs
                                         </a>
                                     </div>

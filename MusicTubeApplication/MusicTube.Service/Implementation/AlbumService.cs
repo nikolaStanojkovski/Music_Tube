@@ -1,6 +1,7 @@
 ﻿using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository.Interface;
 using MusicTube.Service.Interface;
@@ -112,6 +113,11 @@ namespace MusicTube.Service.Implementation
         {
             return songRepository.ReadAllSongs()
                 .Where(z => z.AlbumId.Equals(albumId)).ToList();
+        }
+
+        public List<Album> FilterAlbumsByGenre(Genre genre)
+        {
+            return GetAllAlbums().Where(z => z.AlbumGenre == genre).ToList();
         }
     }
 }

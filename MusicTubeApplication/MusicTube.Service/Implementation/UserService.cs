@@ -289,5 +289,12 @@ namespace MusicTube.Service.Implementation
 
             return chosenCreators;
         }
+
+        public Creator ReadPremiumUser(Guid? userId)
+        {
+            var premium = premiumPlanRepository.Read(userId);
+            var user = userRepository.ReadCreatorInformation(premium.CreatorId);
+            return user;
+        }
     }
 }

@@ -163,10 +163,11 @@ namespace MusicTube.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SettingsPersonalInfo([Bind("Name,Surname,NewsletterSubscribed,FavouriteGenre,FavouriteArtistId")] UserSettingsDto model)
+        public async Task<IActionResult> SettingsPersonalInfo([Bind("Name,Surname,NewsletterSubscribed,FavouriteGenre,FavouriteArtistId")] UserSettingsDto model, Boolean newsLetters)
         {
             var user = await userManager.FindByEmailAsync(User.Identity.Name);
 
+            model.NewsletterSubscribed = newsLetters;
             userService.UpdateUserPersonalInformation(user, model);
 
             return RedirectToAction("Settings", "Account");

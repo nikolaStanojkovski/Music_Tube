@@ -1,5 +1,6 @@
 ﻿using MusicTube.Domain.Domain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using System;
 using System.Collections.Generic;
@@ -24,5 +25,7 @@ namespace MusicTube.Service.Interface
         public Boolean CheckAlbumLimit(Creator user);
 
         public List<Song> GetSongsForAlbum(Guid? albumId);
+
+        public List<Album> FilterAlbumsByGenre(Genre genre);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
@@ -12,6 +13,8 @@ namespace MusicTube.Service.Interface
 {
     public interface IUserService
     {
+        public Creator ReadPremiumUser(Guid? userId);
+
         public MusicTubeUser CreateNewUser(UserRegistrationDto request);
 
         public UserRegistrationDto GetUserRegistrationDto(MusicTubeUser user, UserManager<MusicTubeUser> userManager);

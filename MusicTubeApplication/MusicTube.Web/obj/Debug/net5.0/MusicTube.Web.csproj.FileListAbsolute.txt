@@ -854,3 +854,7 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Account\PremiumPlan.cshtml.g.cs
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\Stripe.net.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\web.config
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\ClosedXML.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\DocumentFormat.OpenXml.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\ExcelNumberFormat.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\System.IO.Packaging.dll
