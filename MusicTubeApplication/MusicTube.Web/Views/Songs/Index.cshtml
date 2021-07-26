@@ -83,7 +83,12 @@
         </form>
     </div>
 
-    <div class="col-4"></div>
+    <div class="col-4 mt-5">
+        @if(ViewBag.error != null && ViewBag.error != "")
+            {
+                <p class="text-center text-danger">There aren't any songs with the specified filter. Please <a class="btn btn-link" asp-controller="Songs" asp-action="Index">Refresh</a> the page.</p>
+            }
+    </div>
 
     <!-- Filters -->
     <div class="col-2">
@@ -189,9 +194,9 @@
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" name="sortCondition" type="radio" value="true" id="genre">
-                                            <label class="form-check-label" for="genre">
-                                                By Genre
+                                            <input class="form-check-input" name="sortCondition" type="radio" value="true" id="popularity">
+                                            <label class="form-check-label" for="popularity">
+                                                By Popularity
                                             </label>
                                         </div>
                                     </div>

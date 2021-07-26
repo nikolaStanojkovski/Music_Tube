@@ -132,18 +132,24 @@ namespace MusicTube.Web.Controllers
         public IActionResult FilterSongs(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)
         {
             List<Song> songs = songService.FilterSongs(genreFilter, nameFilter, descriptionFilter, labelFilter);
+            if (songs == null || songs.Count == 0)
+                ViewBag.error = "error";
             return View("Index", songs);
         }
 
         public IActionResult SortSongs(Boolean sortCondition)
         {
             List<Song> songs = songService.SortSongs(sortCondition);
+            if (songs == null || songs.Count == 0)
+                ViewBag.error = "error";
             return View("Index", songs);
         }
 
         public IActionResult SearchSongs(String text)
         {
             List<Song> songs = songService.SearchSongs(text);
+            if (songs == null || songs.Count == 0)
+                ViewBag.error = "error";
             return View("Index", songs);
         }
     }

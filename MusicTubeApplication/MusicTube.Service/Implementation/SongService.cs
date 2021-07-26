@@ -284,18 +284,18 @@ namespace MusicTube.Service.Implementation
             return filteredSongs;
         }
 
-        public List<Song> SortSongs(Boolean sortCondition) // genre = true, rating = false
+        public List<Song> SortSongs(Boolean sortCondition) // popularity = true, rating = false
         {
             List<Song> allSongs = GetAllSongs();
             List<Song> filteredSongs = new List<Song>();
 
             if(sortCondition)
             {
-                filteredSongs = allSongs.OrderByDescending(z => z.Genre).ToList();
+                filteredSongs = allSongs.OrderByDescending(z => z.Feedbacks.Count).ToList();
             } else
             {
-                filteredSongs = allSongs.OrderByDescending(z => (z.Reviews != null && z.Reviews.Count != 0 ) ? 
-                z.Reviews.Average(t => t.Rating) : 0).ToList();
+                filteredSongs = allSongs.OrderByDescending(z => (z.Reviews != null && 
+                    z.Reviews.Count != 0 ) ? z.Reviews.Average(t => t.Rating) : 0).ToList();
             }
 
             return filteredSongs;
