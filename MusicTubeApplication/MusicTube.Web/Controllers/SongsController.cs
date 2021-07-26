@@ -135,6 +135,12 @@ namespace MusicTube.Web.Controllers
             return View("Index", songs);
         }
 
+        public IActionResult SortSongs(Boolean sortCondition)
+        {
+            List<Song> songs = songService.SortSongs(sortCondition);
+            return View("Index", songs);
+        }
+
         public IActionResult SearchSongs(String text)
         {
             List<Song> songs = songService.SearchSongs(text);

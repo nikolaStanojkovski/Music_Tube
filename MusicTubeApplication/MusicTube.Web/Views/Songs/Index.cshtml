@@ -161,7 +161,7 @@
 
     <!-- Sort -->
     <div class="col-2">
-        <form asp-controller="DietPlans" asp-action="SortDiets" method="post">
+        <form asp-controller="Songs" asp-action="SortSongs" method="post">
 
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#sort">
@@ -171,9 +171,9 @@
             <!-- Modal -->
             <div class="modal fade" id="sort" tabindex="-1" role="dialog" aria-labelledby="sortTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
+                    <div class="modal-content text-dark">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="sortTitleHeader">Sort Diet Plans</h5>
+                            <h5 class="modal-title" id="sortTitleHeader">Sort Songs</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
@@ -183,15 +183,15 @@
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="form-check mb-2">
-                                            <input class="form-check-input" name="sortCondition" type="radio" value="0" id="rating">
+                                            <input class="form-check-input" name="sortCondition" type="radio" value="false" id="rating">
                                             <label class="form-check-label" for="rating">
                                                 By Rating
                                             </label>
                                         </div>
                                         <div class="form-check">
-                                            <input class="form-check-input" name="sortCondition" type="radio" value="1" id="popularity">
-                                            <label class="form-check-label" for="popularity">
-                                                By Popularity
+                                            <input class="form-check-input" name="sortCondition" type="radio" value="true" id="genre">
+                                            <label class="form-check-label" for="genre">
+                                                By Genre
                                             </label>
                                         </div>
                                     </div>
@@ -233,12 +233,13 @@
                         </div>
 
                         <div class="card-body text-center align-items-bottom">
-                            <div style="height:100px;">
+                            <div style="height:130px;">
                                 <h5 class="font-weight-bold text-white">@item.Name - @item.Creator.ArtistName</h5>
                                 @if (item.AlbumId != null)
                                 {
                                     <h6 class="text-warning">Song is part of <b>@item.Album.AlbumName</b> album</h6>
                                 }
+                                <p class="text-center">@item.Genre</p>
                                 <p class="mb-0 text-light">@item.Description</p>
                             </div>
 

@@ -35,5 +35,7 @@ namespace MusicTube.Service.Interface
         public List<Song> SearchSongs(String text);
 
         public List<Song> FilterSongs(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter);
+
+        public List<Song> SortSongs(Boolean sortCondition);
     }
 }
