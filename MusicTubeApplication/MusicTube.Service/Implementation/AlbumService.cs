@@ -50,7 +50,7 @@ namespace MusicTube.Service.Implementation
         {
             return new AlbumDto()
             {
-                PremiumUserId = user.PremiumPlanId
+                PremiumUserId = user.PremiumPlanId.Value
             };
         }
 
@@ -73,7 +73,7 @@ namespace MusicTube.Service.Implementation
                 IsFromCurrentPlan = true,
 
                 PremiumUser = user.PremiumPlan,
-                PremiumUserId = user.PremiumPlanId,
+                PremiumUserId = user.PremiumPlanId.Value,
                 Songs = new List<Song>()
             };
 

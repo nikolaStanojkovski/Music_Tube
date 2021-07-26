@@ -258,7 +258,7 @@
             </div>
         </div>
 
-        @if (Model.PremiumPlan.SubscriptionPlan != MusicTube.Domain.Enumerations.SubscriptionPlan.DIAMOND && isLimited == true)
+        @if (Model.PremiumPlan != null && Model.PremiumPlan.SubscriptionPlan != MusicTube.Domain.Enumerations.SubscriptionPlan.DIAMOND && isLimited == true)
         {
             <div class="row">
                 <div class="col-3"></div>
@@ -341,7 +341,7 @@
                                                     @if (media.GetType().Name.Equals("Song"))
                                                     {
                                                         <div class="col-6">
-                                                            <a asp-controller="Songs" asp-action="Details" asp-route-songId="@media.Id" class="btn btn-outline-info btn-block">Details</a>
+                                                            <a asp-controller="Songs" asp-action="Index" asp-route-songId="@media.Id" class="btn btn-outline-info btn-block">View Song</a>
                                                         </div>
                                                         <div class="col-6">
                                                             <a asp-controller="Songs" asp-action="Delete" asp-route-songId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>
@@ -350,7 +350,7 @@
                                                     else
                                                     {
                                                         <div class="col-6">
-                                                            <a asp-controller="Videos" asp-action="Details" asp-route-videoId="@media.Id" class="btn btn-outline-info btn-block">Details</a>
+                                                            <a asp-controller="Videos" asp-action="Index" asp-route-videoId="@media.Id" class="btn btn-outline-info btn-block">View Video</a>
                                                         </div>
                                                         <div class="col-6">
                                                             <a asp-controller="Videos" asp-action="Delete" asp-route-videoId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>

@@ -5,11 +5,37 @@
 @model IEnumerable<MusicTube.Domain.Domain.Album>
 
 @{
+    ViewData["Title"] = "Albums";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <title>Create Album - Music Tube</title>
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+
+    <!--    DataTables Imports   -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+</head>
+
+@{
     var user = UserManager.GetUserAsync(User).Result;
 }
 
 <div class="row my-5">
-    <div class="col-12">
+    <div class="col-3">
         <form asp-controller="Albums" asp-action="ExportAllAlbums" method="post">
             <div class="row mt-3">
                 <div class="col-12">
@@ -19,7 +45,9 @@
                 </div>
             </div>
         </form>
-
+    </div>
+    <div class="col-4"></div>
+    <div class="col-5">
         <form asp-controller="Albums" asp-action="ExportAlbumsByGenre" method="post">
             <div class="row mt-3">
                 <div class="col-6">
@@ -38,8 +66,6 @@
 
 @if (User.IsInRole("Creator") && ((Creator)user).PremiumPlanId != null) // if is a premium user
 {
-    <div class="mt-1 mb-5" style="background-color: white; height: 1px;"></div>
-
     <div class="row mt-3">
         <div class="col-12">
             <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
@@ -52,27 +78,9 @@
     </div>
 }
 
-
-<head>
-    <meta charset="UTF-8">
-
-    <!--    JQuery Import   -->
-    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
-    <!--    Bootstrap CSS Import   -->
-    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
-
-    <!--    Font Awesome CSS Import   -->
-    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
-
-    <!--    Bootstrap JS Imports   -->
-    <script src="~/custom/js/bootstrap.js"></script>
-</head>
-
-<div class="container my-5">
+<div class="container rounded my-5 px-5 py-4 bg-light">
     <div class="row">
-        <table class="table">
+        <table id="albumsTable" class="table">
             <thead class="thead-light">
                 <tr>
                     <th></th>
@@ -85,7 +93,7 @@
                     <th></th>
                 </tr>
             </thead>
-            <tbody class="text-light">
+            <tbody class="text-dark">
                 @for (int i = 0; i < Model.Count(); i++)
                 {
                     var item = Model.ElementAt(i);
@@ -146,3 +154,11 @@
 
 </div>
 <div class="mb-5"></div>
+
+<script>
+    $(document).ready(function () {
+        $.noConflict();
+
+        $("#albumsTable").DataTable();
+    });
+</script>

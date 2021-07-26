@@ -13,8 +13,8 @@ namespace MusicTube.Domain.Identity
         public String ArtistName { get; set; }
         public String ArtistDescription { get; set; }
 
-        public Guid PremiumPlanId { get; set; }
-        public virtual PremiumPlan PremiumPlan { get; set; }
+        public Guid? PremiumPlanId { get; set; }
+        public virtual PremiumPlan? PremiumPlan { get; set; }
 
         public virtual List<MusicTubeUser> Fans { get; set; }
         public virtual List<Media> Content { get; set; }

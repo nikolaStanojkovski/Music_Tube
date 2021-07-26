@@ -27,7 +27,7 @@ namespace MusicTube.Domain.DTO
         // Creator specific properties
         public String ArtistName { get; set; }
         public String ArtistDescription { get; set; }
-        public PremiumPlan PremiumPlan { get; set; }
+        public PremiumPlan? PremiumPlan { get; set; }
         public List<MusicTubeUser> Fans { get; set; }
         public List<Media> Content { get; set; }
 

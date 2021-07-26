@@ -455,7 +455,7 @@ namespace MusicTube.Repository.Migrations
                     b.Property<string>("ArtistName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PremiumPlanId")
+                    b.Property<Guid?>("PremiumPlanId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasDiscriminator().HasValue("Creator");

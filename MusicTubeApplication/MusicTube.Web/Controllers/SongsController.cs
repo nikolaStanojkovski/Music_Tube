@@ -37,15 +37,21 @@ namespace MusicTube.Web.Controllers
         }
 
         // GET: Songs
-        public IActionResult Index(Guid? albumId)
+        public IActionResult Index(Guid? albumId, Guid? songId)
         {
-            if (albumId == null)
+            if (albumId == null && songId == null)
                 return View(songService.GetAllSongs());
-            else
+            else if(albumId != null)
             {
                 List<Song> songs = albumService.GetSongsForAlbum(albumId);
                 if (songs.Count == 0)
                     ViewBag.error = "The selected album still doesn't have any songs in it.";
+
+                return View(songs);
+            } else
+            {
+                List<Song> songs = new List<Song>();
+                songs.Add(songService.ReadSong(songId));
 
                 return View(songs);
             }
@@ -133,7 +139,7 @@ namespace MusicTube.Web.Controllers
         {
             List<Song> songs = songService.FilterSongs(genreFilter, nameFilter, descriptionFilter, labelFilter);
             if (songs == null || songs.Count == 0)
-                ViewBag.error = "error";
+                ViewBag.error = "There aren't any songs with the specified filter.";
             return View("Index", songs);
         }
 
@@ -141,7 +147,7 @@ namespace MusicTube.Web.Controllers
         {
             List<Song> songs = songService.SortSongs(sortCondition);
             if (songs == null || songs.Count == 0)
-                ViewBag.error = "error";
+                ViewBag.error = "There aren't any songs with the specified filter.";
             return View("Index", songs);
         }
 
@@ -149,7 +155,7 @@ namespace MusicTube.Web.Controllers
         {
             List<Song> songs = songService.SearchSongs(text);
             if (songs == null || songs.Count == 0)
-                ViewBag.error = "error";
+                ViewBag.error = "There aren't any songs with the specified filter.";
             return View("Index", songs);
         }
     }

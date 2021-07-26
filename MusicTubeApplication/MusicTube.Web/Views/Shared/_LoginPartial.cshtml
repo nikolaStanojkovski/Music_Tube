@@ -5,7 +5,7 @@
 @inject UserManager<MusicTubeUser> UserManager
 
 <ul class="navbar-nav bg-dark">
-    @if (SignInManager.IsSignedIn(User))
+    @if (SignInManager.IsSignedIn(User) && UserManager.GetUserAsync(User).Result != null)
     {
         var user = new MusicTubeUser();
         if (User.IsInRole("Creator"))

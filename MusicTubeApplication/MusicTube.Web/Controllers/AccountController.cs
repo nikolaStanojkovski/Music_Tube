@@ -39,7 +39,7 @@ namespace MusicTube.Web.Controllers
         }
 
         [HttpPost, AllowAnonymous]
-        public async Task<IActionResult> Register([Bind("Name,Surname,Genre,FavouriteArtistId,Email,Password,ConfirmPassword")] UserRegistrationDto request, Boolean newsLetters, String role)
+        public async Task<IActionResult> Register([Bind("Name,Surname,Genre,FavouriteArtistId,ArtistName,ArtistDescription,Email,Password,ConfirmPassword")] UserRegistrationDto? request, Boolean newsLetters, String role)
         {
             request.NewsletterSubscribed = newsLetters;
             request.Role = role;

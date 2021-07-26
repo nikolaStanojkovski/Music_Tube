@@ -85,7 +85,7 @@ namespace MusicTube.Service.Implementation
                     ArtistName = request.ArtistName,
                     ArtistDescription = request.ArtistDescription,
                     PremiumPlan = null,
-                    PremiumPlanId = Guid.Empty,
+                    PremiumPlanId = null,
                     Fans = new List<MusicTubeUser>(),
                     Content = new List<Media>()
                 };

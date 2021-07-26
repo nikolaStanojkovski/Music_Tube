@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MusicTube.Web.Controllers
@@ -76,7 +77,7 @@ namespace MusicTube.Web.Controllers
             var contentType = "application/vnd.ms-excel";
 
             if (filteredAlbums.Count == 0)
-                return RedirectToAction("Index", new { error = "There are no tickets with the specified genre" });
+                return RedirectToAction("Index", new { error = "There are no albums with the specified genre" });
 
             var workbook = WriteToCSV(filteredAlbums);
 
@@ -92,11 +93,11 @@ namespace MusicTube.Web.Controllers
         {
             List<Album> filteredAlbums = albumService.GetAllAlbums();
 
-            var fileName = "Albums_All.xlsx";
+            var fileName = "Album_All_Genres.xlsx";
             var contentType = "application/vnd.ms-excel";
 
             if (filteredAlbums.Count == 0)
-                return RedirectToAction("Index", "Tickets", new { error = "There are no tickets with the specified genre" });
+                return RedirectToAction("Index", "Albums", new { error = "There are no albums with the specified genre" });
 
             var workbook = WriteToCSV(filteredAlbums);
 
@@ -110,7 +111,7 @@ namespace MusicTube.Web.Controllers
         private XLWorkbook WriteToCSV(List<Album> filteredAlbums)
         {
             var workbook = new XLWorkbook();
-            IXLWorksheet worksheet = workbook.Worksheets.Add("Tickets_All");
+            IXLWorksheet worksheet = workbook.Worksheets.Add("Album_All_Genres");
 
             worksheet.Cell(1, 1).Value = "ID";
             worksheet.Cell(1, 2).Value = "Name";
@@ -121,12 +122,14 @@ namespace MusicTube.Web.Controllers
             worksheet.Cell(1, 7).Value = "Composer";
             worksheet.Cell(1, 8).Value = "Producer";
             worksheet.Cell(1, 9).Value = "Mix/Master Engineer";
+            worksheet.Cell(1, 10).Value = "Songs";
 
             for (int i = 1; i <= filteredAlbums.Count; i++)
             {
                 var item = filteredAlbums[i - 1];
 
                 var premiumUser = userService.ReadPremiumUser(item.PremiumUserId);
+                List<Song> albumSongs = albumService.GetSongsForAlbum(item.Id);
 
                 worksheet.Cell(i + 1, 1).Value = item.Id.ToString();
                 worksheet.Cell(i + 1, 2).Value = item.AlbumName;
@@ -138,6 +141,26 @@ namespace MusicTube.Web.Controllers
                 worksheet.Cell(i + 1, 7).Value = item.AlbumComposer;
                 worksheet.Cell(i + 1, 8).Value = item.AlbumProducer;
                 worksheet.Cell(i + 1, 9).Value = item.AlbumMixMasterEngineer;
+
+                if(albumSongs == null || albumSongs.Count == 0)
+                {
+                    worksheet.Cell(i + 1, 10).Value = "There are still no songs in this album";
+                } else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int j = 1; j <= albumSongs.Count; j++)
+                    {
+                        Song song = albumSongs[j - 1];
+                        StringBuilder innerSb = new StringBuilder();
+                        innerSb.Append(j).Append(". ").Append(song.Name).Append(" (")
+                            .Append(song.Description).Append(") - Genre: ").Append(song.Genre)
+                            .Append(", Label: ").Append(song.Label);
+
+                        sb.AppendLine(innerSb.ToString());
+                    }
+                    worksheet.Cell(i + 1, 10).Value = sb.ToString();
+                }
+                
             }
 
             return workbook;

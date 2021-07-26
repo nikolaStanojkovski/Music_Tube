@@ -83,11 +83,8 @@
         </form>
     </div>
 
-    <div class="col-4 mt-5">
-        @if(ViewBag.error != null && ViewBag.error != "")
-            {
-                <p class="text-center text-danger">There aren't any songs with the specified filter. Please <a class="btn btn-link" asp-controller="Songs" asp-action="Index">Refresh</a> the page.</p>
-            }
+    <div class="col-4">
+        
     </div>
 
     <!-- Filters -->
@@ -437,3 +434,4 @@
 
     }
 </div>
+<p class="mb-5"></p>

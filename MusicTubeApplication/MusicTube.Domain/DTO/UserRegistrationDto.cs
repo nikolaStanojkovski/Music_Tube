@@ -21,8 +21,8 @@ namespace MusicTube.Domain.DTO
         [Required]
         public Genre FavouriteGenre { get; set; }
 
-        public string FavouriteArtistId { get; set; }
-        public Creator FavouriteArtist { get; set; }
+        public string? FavouriteArtistId { get; set; }
+        public Creator? FavouriteArtist { get; set; }
 
         public List<Creator> AllCreators { get; set; }
 

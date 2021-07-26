@@ -18,8 +18,8 @@ namespace MusicTube.Domain.Identity
         public Boolean NewsletterSubscribed { get; set; }
         public Genre FavouriteGenre { get; set; }
 
-        public string FavouriteArtistId { get; set; }
-        public virtual Creator FavouriteArtist { get; set; }
+        public string? FavouriteArtistId { get; set; }
+        public virtual Creator? FavouriteArtist { get; set; }
 
         public virtual List<UserFeedback> Feedbacks { get; set; }
     }
