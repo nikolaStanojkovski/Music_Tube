@@ -1,0 +1,156 @@
+﻿@model MusicTube.Domain.DTO.VideoDto
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <title>Create Video - Music Tube</title>
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<style>
+
+    .wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .wrapper .file-upload {
+            height: 200px;
+            width: 200px;
+            border-radius: 100px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 4px solid #FFFFFF;
+            overflow: hidden;
+            background-image: linear-gradient(to bottom, #2590EB 50%, #FFFFFF 50%);
+            background-size: 100% 200%;
+            transition: all 1s;
+            color: #FFFFFF;
+            font-size: 100px;
+        }
+
+            .wrapper .file-upload input[type=file] {
+                height: 200px;
+                width: 200px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                opacity: 0;
+                cursor: pointer;
+            }
+
+            .wrapper .file-upload:hover {
+                background-position: 0 -100%;
+                color: #2590EB;
+            }
+</style>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#fileName").hide();
+
+        $("#videoToUpload").change(function (e) {
+
+            var input = e.target;
+            if (input.files && input.files[0]) {
+                var file = input.files[0];
+
+                $("#fileName").show();
+                $("#fileName").html(file.name);
+            }
+
+        })
+
+    })
+
+</script>
+
+<h1 class="text-center mt-5">Create Video</h1>
+<br />
+<div class="row mb-5">
+    <div class="col-md-12">
+        <form asp-controller="Videos" asp-action="Create" enctype="multipart/form-data" method="post">
+
+            <div class="form-group text-center">
+                <label class="control-label mb-2">Upload your video here</label>
+                <div class="wrapper my-3">
+                    <div class="file-upload">
+                        <input type="file" accept="video/*" name="videoToUpload" id="videoToUpload" />
+                        <i class="fa fa-arrow-up"></i>
+                    </div>
+                </div>
+                <p id="fileName" class="btn btn-outline-info text-white"></p>
+                <p class="text-secondary mt-1">
+                    <i><b>.mp4</b> file format accepted</i>
+                </p>
+            </div>
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group col-12">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <label asp-for="Label" class="control-label"></label>
+                <input asp-for="Label" class="form-control" />
+                <span asp-validation-for="Label" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea asp-for="Description" rows="5" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group col-12">
+                <label asp-for="Genre" class="control-label"></label>
+                <div>
+                    <select class="form-control" asp-for="@Model.Genre" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.Genre>()">
+                    </select>
+                    @Html.ValidationMessageFor(m => m.Genre)
+                </div>
+            </div>
+            <div class="form-group col-12 mt-4">
+                <h5 class="text-warning mt-1 mb-3">Song in the video</h5>
+                @Html.DropDownListFor(z => z.SongId,
+                                new SelectList(Model.AllSongs, "Id", "Name"),
+                                "None",
+                                new { @class = "form-control" })
+            </div>
+
+            <br />
+            <br />
+            <div class="form-group col-12">
+                <button type="submit" class="btn btn-block btn-primary">Submit</button>
+            </div>
+        </form>
+        <div class="col-12 mt-4 mb-5">
+            <a asp-controller="Videos" asp-action="Index" class="btn btn-outline-info btn-block">Back to List</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

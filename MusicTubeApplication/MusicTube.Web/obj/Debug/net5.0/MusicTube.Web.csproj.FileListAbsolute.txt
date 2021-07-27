@@ -858,3 +858,6 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\DocumentFormat.OpenXml.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\ExcelNumberFormat.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\System.IO.Packaging.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Artists\Index.cshtml.g.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Videos\Index.cshtml.g.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Videos\Create.cshtml.g.cs

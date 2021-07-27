@@ -1,0 +1,287 @@
+﻿@model IEnumerable<MusicTube.Domain.Domain.Video>
+
+@using Microsoft.AspNetCore.Identity
+@using MusicTube.Domain.Identity
+
+@inject SignInManager<MusicTubeUser> SignInManager
+@inject UserManager<MusicTubeUser> UserManager
+
+@{
+    ViewData["Title"] = "Videos - Music Tube";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<head>
+    <meta charset="UTF-8">
+
+    <!--    JQuery Import   -->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!--    Bootstrap CSS Import   -->
+    <link rel="stylesheet" href="~/custom/css/bootstrap.css" />
+
+    <!--    Font Awesome CSS Import   -->
+    <link rel="stylesheet" href="~/custom/fontawesome/css/all.css">
+
+    <!--    Bootstrap JS Imports   -->
+    <script src="~/custom/js/bootstrap.js"></script>
+</head>
+
+<style>
+    .checked {
+        color: orange;
+    }
+</style>
+
+<script>
+
+    $(document).ready(function () {
+
+        /* $(".star").hover(function () {
+
+            var valueCurrentStar = $(this).attr('star-id');
+
+            $(this).removeClass('btn-outline-dark');
+            $(this).addClass('btn-outline-warning');
+
+            $(".star").each(function () {
+                if ($(this).attr('star-id') <= valueCurrentStar)
+                    $(this).addClass('btn-outline-warning');
+            })
+        }, function () {
+            $(".star").each(function () {
+                $(this).removeClass('btn-outline-warning');
+            })
+        }); */
+
+        $(".rating").on('input', function () {
+            var valueCurrentStar = $(this).val();
+
+            $(".star").each(function () {
+                $(this).removeClass('checked');
+            });
+
+            $(".star").each(function () {
+                if ($(this).attr('star-id') <= valueCurrentStar)
+                    $(this).addClass('checked');
+            });
+
+        });
+    })
+
+</script>
+
+<div class="row mt-5">
+    <!-- Search bar -->
+    <div class="col-4">
+        <form asp-controller="Videos" asp-action="SearchVideos" method="post">
+            <div class="input-group">
+                <div class="input-group">
+                    <input id="text" name="text" type="text" class="form-control" placeholder="Search for videos...">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-info">
+                            &nbsp; &nbsp; &nbsp;<i class="fa fa-search"></i> &nbsp; &nbsp; &nbsp;
+                        </button>
+                    </span>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-4">
+
+    </div>
+
+    <!-- Filters -->
+    <div class="col-2">
+        <form asp-controller="Videos" asp-action="FilterVideos" method="post">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#filters">
+                <i class="fas fa-filter"></i> Filters
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="filters" tabindex="-1" role="dialog" aria-labelledby="dietFiltersTitle" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered text-dark" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="dietFiltersHeader">Video Filters</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+                            <div class="row align-middle mb-4">
+                                <div class="col-4 text-left pt-2">
+                                    By Genre:
+                                </div>
+                                <div class="col-8">
+                                    <div>
+                                        <select class="form-control" name="genreFilter" id="genreFilter" asp-items="Html.GetEnumSelectList<MusicTube.Domain.Enumerations.Genre>()">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-middle">
+                                <div class="col-4 text-left pt-2">
+                                    By Name:
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <input id="nameFilter" name="nameFilter" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-middle">
+                                <div class="col-4 text-left pt-2">
+                                    By Description:
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <input id="descriptionFilter" name="descriptionFilter" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row align-middle">
+                                <div class="col-4 text-left pt-2">
+                                    By Label:
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <input id="labelFilter" name="labelFilter" type="text" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <!-- Sort -->
+    <div class="col-2">
+        <form asp-controller="Videos" asp-action="SortVideos" method="post">
+
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-block btn-info" data-toggle="modal" data-target="#sort">
+                <i class="fas fa-sort"></i> Sort
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="sort" tabindex="-1" role="dialog" aria-labelledby="sortTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content text-dark">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="sortTitleHeader">Sort Songs</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-check mb-2">
+                                            <input class="form-check-input" name="sortCondition" type="radio" value="false" id="rating">
+                                            <label class="form-check-label" for="rating">
+                                                By Rating
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" name="sortCondition" type="radio" value="true" id="popularity">
+                                            <label class="form-check-label" for="popularity">
+                                                By Popularity
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserAsync(User).Result != null && User.IsInRole("Creator"))
+{
+    <a asp-controller="Videos" asp-action="Create" class="btn btn-block btn-primary my-5">
+        Add Video
+    </a>
+}
+
+<h5 class="text-danger">@ViewBag.error</h5>
+
+<div class="row my-5">
+    @{
+        if (Model.Count() != 0)
+        {
+            for (int i = 0; i < Model.Count(); i++)
+            {
+                var item = Model.ElementAt(i);
+
+                <div class="col-6 mb-4">
+                    <div class="card bg-secondary">
+                        <h3 class="card-header text-light font-weight-normal py-4" style="background-color: #575d63;">
+                                <b>@item.Name</b> - @item.Creator.ArtistName
+                        </h3>
+
+                        <div class="card-body p-0 text-center align-items-bottom">
+                            <div class="p-0" style="height: 305px; ">
+                                <video width="540" height="305" controls>
+                                    <source src="~/custom/files/video/@item.VideoURL" type="video/mp4">
+                                </video>
+                            </div>
+                        </div>
+
+                        <div class="card-footer" style="background-color: #51575c;">
+
+                            <div class="row" style="font-size: 23px;">
+                                @{
+                                    var averageRating = 0.0;
+                                    if (item.Reviews != null && item.Reviews.Count != 0)
+                                        averageRating = item.Reviews.Average(z => z.Rating);
+                                }
+                                <div class="col-6 text-center">
+                                    @for (var r = 1; r <= (int)averageRating; r++)
+                                    {
+                                        <span>
+                                            <i class="fas fa-star checked mr-2"></i>
+                                        </span>
+                                    }
+                                    @for (var r = 1; r <= (5 - (int)averageRating); r++)
+                                    {
+                                        <span>
+                                            <i class="fas fa-star mr-2"></i>
+                                        </span>
+                                    }
+                                </div>
+                                <div class="col-6">
+                                    <a asp-controller="Videos" asp-action="Details" class="btn btn-info btn-block align-middle">
+                                        Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+
+    }
+</div>
+<p class="mb-5"></p>

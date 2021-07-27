@@ -12,8 +12,7 @@ namespace MusicTube.Domain.Domain
         [Required]
         public String VideoURL { get; set; }
 
-        public Guid SongId { get; set; }
-        [Required]
-        public virtual Song Song { get; set; }
+        public Guid? SongId { get; set; }
+        public virtual Song? Song { get; set; }
     }
 }

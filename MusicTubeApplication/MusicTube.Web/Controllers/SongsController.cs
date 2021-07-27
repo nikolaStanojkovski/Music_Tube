@@ -25,22 +25,28 @@ namespace MusicTube.Web.Controllers
         private readonly IAlbumService albumService;
         private readonly UserManager<MusicTubeUser> userManager;
 
-        public SongsController(ApplicationDbContext context,
-            ISongService _songService,
+        public SongsController(ISongService _songService,
             IAlbumService _albumService,
             UserManager<MusicTubeUser> _userManager)
         {
-            _context = context;
             this.songService = _songService;
             this.userManager = _userManager;
             this.albumService = _albumService;
         }
 
         // GET: Songs
-        public IActionResult Index(Guid? albumId, Guid? songId)
+        public IActionResult Index(Guid? albumId, Guid? songId, string? artistId)
         {
-            if (albumId == null && songId == null)
+            if (albumId == null && songId == null && artistId == null)
                 return View(songService.GetAllSongs());
+            else if(artistId != null)
+            {
+                List<Song> songs = songService.GetSongsForArtist(artistId);
+                if (songs.Count == 0)
+                    ViewBag.error = "The selected artist still doesn't have any uploaded songs.";
+
+                return View(songs);
+            }
             else if(albumId != null)
             {
                 List<Song> songs = albumService.GetSongsForAlbum(albumId);

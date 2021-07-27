@@ -17,16 +17,19 @@ namespace MusicTube.Service.Implementation
     public class UserService : IUserService
     {
         private readonly IUserRepository userRepository;
+        private readonly ISongRepository songRepository;
         private readonly IRepository<Review> reviewRepository;
         private readonly IRepository<PremiumPlan> premiumPlanRepository;
 
         public UserService(IUserRepository _userRepository,
             IRepository<Review> _reviewRepository,
-            IRepository<PremiumPlan> _premiumPlanRepository)
+            IRepository<PremiumPlan> _premiumPlanRepository,
+            ISongRepository _songRepository)
         {
             this.userRepository = _userRepository;
             this.reviewRepository = _reviewRepository;
             this.premiumPlanRepository = _premiumPlanRepository;
+            this.songRepository = _songRepository;
         }
 
         public MusicTubeUser CreateNewUser(UserRegistrationDto request)
@@ -295,6 +298,102 @@ namespace MusicTube.Service.Implementation
             var premium = premiumPlanRepository.Read(userId);
             var user = userRepository.ReadCreatorInformation(premium.CreatorId);
             return user;
+        }
+
+        public List<Creator> GetAllCreators()
+        {
+            List<MusicTubeUser> users = userRepository.GetAll()
+                .Where(z => z.GetType().Name.Equals("Creator")).ToList();
+            List<Creator> creators = new List<Creator>();
+
+            foreach (var user in users)
+                creators.Add((Creator)userRepository.ReadCreatorInformation(user.Id));
+
+            return creators;
+        }
+
+        public Creator GetCreator(string artistId)
+        {
+            return userRepository.ReadCreatorInformation(artistId);
+        }
+
+        public List<Creator> FilterCreatorsByGenre(Genre genre)
+        {
+            List<MusicTubeUser> users = userRepository.GetAll()
+                .Where(z => z.GetType().Name.Equals("Creator") && z.FavouriteGenre == genre).ToList();
+            List<Creator> creators = new List<Creator>();
+
+            foreach (var user in users)
+                creators.Add((Creator)userRepository.ReadCreatorInformation(user.Id));
+
+            return creators;
+        }
+
+        public String GetAlbumsAsString(Creator user)
+        {
+            PremiumPlan premiumPlan = user.PremiumPlan;
+            
+            if(premiumPlan.Albums != null && premiumPlan.Albums.Count != 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                var counter = 1;
+                foreach (var album in premiumPlan.Albums)
+                {
+                    sb.AppendLine(counter + ". " + album.AlbumName + " - Genre: " + album.AlbumGenre);
+                }
+
+                return sb.ToString();
+            } else
+            {
+                return "The creator has no albums.";
+            }
+        }
+
+        public String GetSongsAsString(Creator user)
+        {
+            List<Media> medias = user.Content.Where(z => z.GetType().Name.Equals("Song")).ToList();
+            List<Song> songs = new List<Song>();
+            foreach (var media in medias)
+                songs.Add((Song)media);
+
+            if(songs != null && songs.Count != 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                var counter = 1;
+                foreach (var song in songs)
+                {
+                    sb.AppendLine(counter + ". " + song.Name + " - Genre: " + song.Genre + ", Label: " + song.Label);
+                }
+
+                return sb.ToString();
+            } else
+            {
+                return "The creator has no songs.";
+            }
+        }
+
+        public String GetVideosAsString(Creator user)
+        {
+            List<Media> medias = user.Content.Where(z => z.GetType().Name.Equals("Video")).ToList();
+            List<Video> videos = new List<Video>();
+            foreach (var media in medias)
+                videos.Add((Video)media);
+
+            if (videos != null && videos.Count != 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                var counter = 1;
+                foreach (var video in videos)
+                {
+                    sb.AppendLine(counter + ". " + video.Name + ", Song: " + video.Song.Name);
+                }
+
+                return sb.ToString();
+            }
+            else
+            {
+                return "The creator has no songs.";
+            }
         }
     }
 }

@@ -57,12 +57,14 @@ namespace MusicTube.Web
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(ISongRepository), typeof(SongRepository));
+            services.AddScoped(typeof(IVideoRepository), typeof(VideoRepository));
 
             // Service scoping
 
             services.AddTransient<IUserService, UserService>();
-            services.AddTransient<ISongService, SongService>();
             services.AddTransient<IAlbumService, AlbumService>();
+            services.AddTransient<ISongService, SongService>();
+            services.AddTransient<IVideoService, VideoService>();
 
             // Payment provider settings
 

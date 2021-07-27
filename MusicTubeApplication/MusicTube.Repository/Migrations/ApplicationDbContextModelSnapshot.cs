@@ -433,7 +433,7 @@ namespace MusicTube.Repository.Migrations
                 {
                     b.HasBaseType("MusicTube.Domain.Domain.Media");
 
-                    b.Property<Guid>("SongId")
+                    b.Property<Guid?>("SongId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("VideoURL")
@@ -615,8 +615,7 @@ namespace MusicTube.Repository.Migrations
                     b.HasOne("MusicTube.Domain.Domain.Song", "Song")
                         .WithMany("VideosAppearedIn")
                         .HasForeignKey("SongId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Song");
                 });

@@ -28,5 +28,17 @@ namespace MusicTube.Service.Interface
         public PremiumDto GetPremiumDto(Creator user);
 
         public void SetPremium(Creator user, Int64 sum);
+
+        // Artists controller specific
+
+        public List<Creator> GetAllCreators();
+
+        public List<Creator> FilterCreatorsByGenre(Genre genre);
+
+        public Creator GetCreator(string? artistId);
+
+        public String GetAlbumsAsString(Creator user);
+        public String GetSongsAsString(Creator user);
+        public String GetVideosAsString(Creator user);
     }
 }

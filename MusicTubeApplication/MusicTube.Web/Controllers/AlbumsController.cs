@@ -30,10 +30,20 @@ namespace MusicTube.Web.Controllers
             this.userService = _userService;
         }
 
-        public IActionResult Index(string error = "")
+        public IActionResult Index(string? artistId, string error = "")
         {
-            ViewBag.error = error;
-            return View(albumService.GetAllAlbums());
+            if(artistId == null)
+            {
+                ViewBag.error = error;
+
+                return View(albumService.GetAllAlbums());
+            } else
+            {
+                List<Album> albums = albumService.GetAlbumsForUser(userService.GetCreator(artistId));
+                if (albums == null || albums.Count == 0)
+                    ViewBag.error = "The selected artist still doesn't have any uploaded albums.";
+                return View(albums);
+            }
         }
 
         public IActionResult Create()

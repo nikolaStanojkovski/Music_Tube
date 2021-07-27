@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @using MusicTube.Domain.Identity
 @inject UserManager<MusicTubeUser> UserManager
+@inject SignInManager<MusicTubeUser> SignInManager
 @model IEnumerable<MusicTube.Domain.Domain.Album>
 
 @{
@@ -56,7 +57,7 @@
                 </div>
                 <div class="col-6">
                     <button type="submit" class="btn btn-info btn-block">
-                        Export Albums by Genre
+                        Export by Genre
                     </button>
                 </div>
             </div>
@@ -64,19 +65,23 @@
     </div>
 </div>
 
-@if (User.IsInRole("Creator") && ((Creator)user).PremiumPlanId != null) // if is a premium user
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserAsync(User).Result != null && User.IsInRole("Creator")) // if is a premium user
 {
-    <div class="row mt-3">
-        <div class="col-12">
-            <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
+    if (((Creator)user).PremiumPlanId != null)
+    {
+        <div class="row mt-3">
+            <div class="col-12">
+                <a asp-controller="Albums" asp-action="Create" class="btn btn-primary btn-block">Add Album</a>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <p class="text-danger">@ViewBag.error</p>
-        </div>
-    </div>
+    }
 }
+
+<div class="row">
+    <div class="col-12">
+        <p class="text-danger">@ViewBag.error</p>
+    </div>
+</div>
 
 <div class="container rounded my-5 px-5 py-4 bg-light">
     <div class="row">
@@ -98,7 +103,7 @@
                 {
                     var item = Model.ElementAt(i);
 
-                    <tr class="align-items-center" style="width: 100px; height: 100px;">
+                    <tr class="align-items-center my-1" style="width: 100px; height: 100px;">
                         <td>
                             <button type="button" data-toggle="modal" data-target=".bd-example-modal-sm-@i">
                                 <img src="@item.AlbumCoverArt" width="100" height="100" />

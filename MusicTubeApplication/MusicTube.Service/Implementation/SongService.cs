@@ -300,5 +300,10 @@ namespace MusicTube.Service.Implementation
 
             return filteredSongs;
         }
+
+        public List<Song> GetSongsForArtist(string artistId)
+        {
+            return GetAllSongs().Where(z => z.CreatorId.Equals(artistId)).ToList();
+        }
     }
 }

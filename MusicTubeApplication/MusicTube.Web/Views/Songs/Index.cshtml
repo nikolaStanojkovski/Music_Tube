@@ -1,5 +1,11 @@
 ﻿@model IEnumerable<MusicTube.Domain.Domain.Song>
 
+@using Microsoft.AspNetCore.Identity
+@using MusicTube.Domain.Identity
+
+@inject SignInManager<MusicTubeUser> SignInManager
+@inject UserManager<MusicTubeUser> UserManager
+
 @{
     ViewData["Title"] = "Songs - Music Tube";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -84,7 +90,7 @@
     </div>
 
     <div class="col-4">
-        
+
     </div>
 
     <!-- Filters -->
@@ -211,13 +217,14 @@
     </div>
 </div>
 
-@if (User.IsInRole("Creator"))
+@if (SignInManager.IsSignedIn(User) && UserManager.GetUserAsync(User).Result != null && User.IsInRole("Creator"))
 {
     <a asp-controller="Songs" asp-action="Create" class="btn btn-block btn-primary my-5">
         Add Song
     </a>
-    <h5 class="text-danger">@ViewBag.error</h5>
 }
+
+<h5 class="text-danger">@ViewBag.error</h5>
 
 <div class="row my-5">
     @{
