@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MusicTube.Domain.Domain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
@@ -93,14 +94,6 @@ namespace MusicTube.Web.Controllers
             return View(song);
         }
 
-        // GET: Songs/Details/5
-        public IActionResult Details(Guid? songId)
-        {
-            Song song = songService.ReadSong(songId);
-
-            return View(song);
-        }
-
         // GET: Songs/Delete/5
         public IActionResult Delete(Guid? songId)
         {
@@ -128,7 +121,7 @@ namespace MusicTube.Web.Controllers
         public IActionResult GiveFeedback(Boolean liking, Guid songId, String comment)
         {
             var user = userManager.FindByEmailAsync(User.Identity.Name).Result;
-            songService.UpdateFeedbackForSong(user, liking, songId, comment);
+            songService.CreateFeedbackForSong(user, liking, songId, comment);
 
             return RedirectToAction("Index", "Songs");
         }

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusicTube.Domain.Domain;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Service.Interface;
@@ -87,7 +87,7 @@ namespace MusicTube.Web.Controllers
             var contentType = "application/vnd.ms-excel";
 
             if (filteredAlbums.Count == 0)
-                return RedirectToAction("Index", new { error = "There are no albums with the specified genre" });
+                return RedirectToAction("Index", new { error = "There are no albums with the specified genre to export." });
 
             var workbook = WriteToCSV(filteredAlbums);
 
@@ -107,7 +107,7 @@ namespace MusicTube.Web.Controllers
             var contentType = "application/vnd.ms-excel";
 
             if (filteredAlbums.Count == 0)
-                return RedirectToAction("Index", "Albums", new { error = "There are no albums with the specified genre" });
+                return RedirectToAction("Index", "Albums", new { error = "There are no albums to export." });
 
             var workbook = WriteToCSV(filteredAlbums);
 

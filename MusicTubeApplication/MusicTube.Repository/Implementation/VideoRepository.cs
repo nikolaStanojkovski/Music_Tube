@@ -24,6 +24,7 @@ namespace MusicTube.Repository.Implementation
         {
             return entities
                 .Include(z => z.Reviews)
+                .Include(z => z.Feedbacks)
                 .Include(z => z.Song)
                 .Include(z => z.Creator)
                 .ToListAsync().Result;
@@ -35,6 +36,9 @@ namespace MusicTube.Repository.Implementation
         {
             return entities
                 .Include(z => z.Reviews)
+                .Include("Reviews.Listener")
+                .Include(z => z.Feedbacks)
+                .Include("Feedbacks.User")
                 .Include(z => z.Song)
                 .Include(z => z.Creator)
                 .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;

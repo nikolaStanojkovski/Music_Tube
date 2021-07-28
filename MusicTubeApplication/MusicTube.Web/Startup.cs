@@ -8,11 +8,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MusicTube.Domain;
 using MusicTube.Domain.DTO;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository;
 using MusicTube.Repository.Implementation;
 using MusicTube.Repository.Interface;
+using MusicTube.Service;
 using MusicTube.Service.Implementation;
 using MusicTube.Service.Interface;
 using Stripe;
@@ -25,9 +27,17 @@ namespace MusicTube.Web
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public EmailSettings _emailSettings;
+        private string _contentRootPath = "";
+
+        public Startup(IConfiguration configuration, Microsoft.AspNetCore.Hosting.IHostingEnvironment env)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
+
+            this._emailSettings = new EmailSettings();
+            Configuration.GetSection("EmailSettings").Bind(_emailSettings);
+
+            _contentRootPath = env.ContentRootPath;
         }
 
         public IConfiguration Configuration { get; }
@@ -51,6 +61,8 @@ namespace MusicTube.Web
             });
 
             services.AddControllersWithViews();
+            services.AddMemoryCache();
+            services.AddRazorPages();
 
             // Repository scoping
 
@@ -70,8 +82,12 @@ namespace MusicTube.Web
 
             services.Configure<StripeSettingsDTO>(Configuration.GetSection("Stripe"));
 
-            services.AddMemoryCache();
-            services.AddRazorPages();
+            // E-mail configurations
+
+            /* services.AddScoped<EmailSettings>(es => _emailSettings);
+            services.AddScoped<IEmailService, EmailService>(email => new EmailService(_emailSettings));
+            services.AddScoped<IBackgroundEmailSender, BackgroundEmailSender>();
+            services.AddHostedService<ConsumeScopedHostedService>(); */
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

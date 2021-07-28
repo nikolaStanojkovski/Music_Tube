@@ -5,6 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.13.0" />
+    <PackageReference Include="MimeKit" Version="2.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\MusicTube.Domain\MusicTube.Domain.csproj" />
     <ProjectReference Include="..\MusicTube.Repository\MusicTube.Repository.csproj" />
   </ItemGroup>

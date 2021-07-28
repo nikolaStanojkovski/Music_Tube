@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MusicTube.Domain.Domain;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
+using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Service.Interface;
 using System;
@@ -16,18 +17,23 @@ namespace MusicTube.Web.Controllers
     public class VideosController : Controller
     {
         private readonly IVideoService videoService;
+        private readonly ISongService songService;
         private readonly UserManager<MusicTubeUser> userManager;
 
         public VideosController(IVideoService _videoService,
+            ISongService _songService,
             UserManager<MusicTubeUser> _userManager)
         {
             this.videoService = _videoService;
+            this.songService = _songService;
             this.userManager = _userManager;
         }
 
         // GET: Videos
         public IActionResult Index(Guid? videoId, string? artistId)
         {
+            ViewBag.AllSongs = songService.GetAllSongs();
+
             if (videoId == null && artistId == null)
                 return View(videoService.GetAllVideos());
             else if (artistId != null)
@@ -51,8 +57,8 @@ namespace MusicTube.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
-            VideoDto song = videoService.GetVideoDto(user);
-            return View(song);
+            VideoDto video = videoService.GetVideoDto(user);
+            return View(video);
         }
 
         [HttpPost]
@@ -76,6 +82,68 @@ namespace MusicTube.Web.Controllers
                 return RedirectToAction("Index", "Videos");
             }
             return View(video);
+        }
+
+        public IActionResult Details(Guid? videoId)
+        {
+            var model = videoService.GetDetailsDto(videoId);
+
+            return View(model);
+        }
+
+        public IActionResult GiveFeedback(Boolean liking, Guid videoId, String comment)
+        {
+            var user = userManager.FindByEmailAsync(User.Identity.Name).Result;
+            videoService.CreateFeedbackForVideo(user, liking, videoId, comment);
+
+            return RedirectToAction("Details", new { videoId = videoId });
+        }
+
+        public IActionResult GiveReview(Guid videoId, String summary, String description, String rating)
+        {
+            var user = (Listener)userManager.FindByEmailAsync(User.Identity.Name).Result;
+            videoService.UpdateReviewForVideo(user, videoId, summary, description, rating);
+
+            return RedirectToAction("Details", new { videoId = videoId });
+        }
+
+        public IActionResult Delete(Guid? videoId)
+        {
+            videoService.DeleteVideo(videoId);
+
+            return RedirectToAction("Details", new { videoId = videoId });
+        }
+
+        public IActionResult FilterVideos(Guid? songFilter, Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)
+        {
+            ViewBag.AllSongs = songService.GetAllSongs();
+
+            List<Video> videos = videoService.FilterVideos(genreFilter, songFilter, nameFilter, descriptionFilter, labelFilter);
+            if (videos == null || videos.Count == 0)
+                ViewBag.error = "There aren't any videos with the specified filter.";
+            return View("Index", videos);
+        }
+
+        public IActionResult SortVideos(Boolean? sortCondition)
+        {
+            ViewBag.AllSongs = songService.GetAllSongs();
+
+            List<Video> videos = videoService.SortVideos(sortCondition);
+
+            if (sortCondition == null || videos == null || videos.Count == 0)
+                ViewBag.error = "There aren't any videos with the specified filter.";
+           
+            return View("Index", videos);
+        }
+
+        public IActionResult SearchVideos(String? text)
+        {
+            ViewBag.AllSongs = songService.GetAllSongs();
+
+            List<Video> videos = videoService.SearchVideos(text);
+            if (text == null || videos == null || videos.Count == 0)
+                ViewBag.error = "There aren't any videos with the specified filter.";
+            return View("Index", videos);
         }
     }
 }

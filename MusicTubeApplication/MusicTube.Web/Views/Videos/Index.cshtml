@@ -125,6 +125,22 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row align-middle mb-4">
+                                <div class="col-4 text-left pt-2">
+                                    By Song:
+                                </div>
+                                <div class="col-8">
+                                    <div class="form-group">
+                                        <select class="form-control" id="songFilter" name="songFilter">
+                                            <option value="0">None</option>
+                                            @foreach (var song in ViewBag.AllSongs)
+                                            {
+                                                <option value="@song.Id">@song.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row align-middle">
                                 <div class="col-4 text-left pt-2">
                                     By Name:
@@ -224,7 +240,7 @@
     </a>
 }
 
-<h5 class="text-danger">@ViewBag.error</h5>
+<h5 class="text-danger mt-4">@ViewBag.error</h5>
 
 <div class="row my-5">
     @{
@@ -271,7 +287,7 @@
                                     }
                                 </div>
                                 <div class="col-6">
-                                    <a asp-controller="Videos" asp-action="Details" class="btn btn-info btn-block align-middle">
+                                    <a asp-controller="Videos" asp-action="Details" asp-route-videoId="@item.Id" class="btn btn-info btn-block align-middle">
                                         Details
                                     </a>
                                 </div>

@@ -1,6 +1,7 @@
 ﻿using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository.Interface;
@@ -161,38 +162,27 @@ namespace MusicTube.Service.Implementation
             }
         }
 
-        public void UpdateFeedbackForSong(MusicTubeUser user, bool liking, Guid songId, string comment)
+        public void CreateFeedbackForSong(MusicTubeUser user, bool liking, Guid songId, string comment)
         {
             user = userRepository.ReadUserInformation(user.Id);
             Song song = songRepository.ReadSong(songId);
-            
-            UserFeedback existingFeedback = feedbackRepository.ReadAll().Where(z => z.MediaId.Equals(songId) && z.UserId.Equals(user.Id)).SingleOrDefault();
-            if (existingFeedback != null)
+
+            UserFeedback newFeedback = new UserFeedback()
             {
-                existingFeedback.IsLiked = liking;
-                existingFeedback.IsDisliked = !liking;
-                existingFeedback.Comment = comment;
+                Id = Guid.NewGuid(),
 
-                feedbackRepository.Update(existingFeedback);
-            } else
-            {
-                UserFeedback newFeedback = new UserFeedback()
-                {
-                    Id = Guid.NewGuid(),
+                IsLiked = liking,
+                IsDisliked = !liking,
+                Comment = comment,
 
-                    IsLiked = liking,
-                    IsDisliked = !liking,
-                    Comment = comment,
+                User = user,
+                UserId = user.Id,
+                Media = song,
+                MediaId = song.Id
+            };
+            user.Feedbacks.Add(newFeedback);
 
-                    User = user,
-                    UserId = user.Id,
-                    Media = song,
-                    MediaId = song.Id
-                };
-                user.Feedbacks.Add(newFeedback);
-
-                feedbackRepository.Create(newFeedback);
-            }
+            feedbackRepository.Create(newFeedback);
 
             userRepository.UpdateUser(user);
             songRepository.UpdateSong(song);

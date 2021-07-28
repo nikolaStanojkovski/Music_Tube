@@ -56,7 +56,7 @@ namespace MusicTube.Web.Controllers
             var contentType = "application/vnd.ms-excel";
 
             if (filteredArtists.Count == 0)
-                return RedirectToAction("Index", new { error = "There are no artists with the specified genre" });
+                return RedirectToAction("Index", new { error = "There are no artists with the specified genre to export." });
 
             var workbook = WriteToCSV(filteredArtists);
 
@@ -76,7 +76,7 @@ namespace MusicTube.Web.Controllers
             var contentType = "application/vnd.ms-excel";
 
             if (filteredArtists.Count == 0)
-                return RedirectToAction("Index", "Artists", new { error = "There are no artists with the specified favourite genre" });
+                return RedirectToAction("Index", "Artists", new { error = "There are no artists to export." });
 
             var workbook = WriteToCSV(filteredArtists);
 

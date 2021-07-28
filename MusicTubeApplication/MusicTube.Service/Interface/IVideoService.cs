@@ -1,5 +1,5 @@
 ﻿using MusicTube.Domain.Domain;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using System;
@@ -20,13 +20,22 @@ namespace MusicTube.Service.Interface
 
         public Video DeleteVideo(Guid? videoId);
 
+
         public VideoDto GetVideoDto(Creator user);
 
-        /* public List<Video> SearchVideos(String text);
+        public VideoDto GetDetailsDto(Guid? videoId);
 
-        public List<Video> FilterVideos(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter);
 
-        public List<Video> SortVideos(Boolean sortCondition); */
+        public void CreateFeedbackForVideo(MusicTubeUser user, Boolean liking, Guid videoId, String comment);
+
+        public void UpdateReviewForVideo(Listener user, Guid videoId, String summary, String description, String rating);
+
+
+        public List<Video> SearchVideos(String text);
+
+        public List<Video> FilterVideos(Genre genreFilter, Guid? songFilter, String nameFilter, String descriptionFilter, String labelFilter);
+
+        public List<Video> SortVideos(Boolean? sortCondition);
 
 
         public List<Video> GetVideosForArtist(string? artistId);

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.IdentityDTO;
 using MusicTube.Domain.Identity;
 using MusicTube.Service.Interface;
 using Stripe;

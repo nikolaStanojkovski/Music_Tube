@@ -1,5 +1,5 @@
 ﻿using MusicTube.Domain.Domain;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using System;

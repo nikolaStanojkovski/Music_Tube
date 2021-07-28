@@ -28,7 +28,7 @@ using MusicTube.Domain;
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"dbfaa2ad200b14734ffa9011a0b8b2768886d72c", @"/Views/Account/Login.cshtml")]
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"58475e203d5b24f90773ba811cbe87539e68c630", @"/Views/_ViewImports.cshtml")]
-    public class Views_Account_Login : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MusicTube.Domain.DTO.UserLoginDto>
+    public class Views_Account_Login : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<MusicTube.Domain.DTO.IdentityDTO.UserLoginDto>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("rel", new global::Microsoft.AspNetCore.Html.HtmlString("stylesheet"), global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_1 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("href", new global::Microsoft.AspNetCore.Html.HtmlString("~/custom/css/bootstrap.css"), global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
@@ -249,7 +249,7 @@ Write(Html.ValidationSummary());
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
         public global::Microsoft.AspNetCore.Mvc.Rendering.IJsonHelper Json { get; private set; }
         [global::Microsoft.AspNetCore.Mvc.Razor.Internal.RazorInjectAttribute]
-        public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<MusicTube.Domain.DTO.UserLoginDto> Html { get; private set; }
+        public global::Microsoft.AspNetCore.Mvc.Rendering.IHtmlHelper<MusicTube.Domain.DTO.IdentityDTO.UserLoginDto> Html { get; private set; }
     }
 }
 #pragma warning restore 1591

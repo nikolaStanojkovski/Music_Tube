@@ -1,6 +1,6 @@
 ﻿using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
-using MusicTube.Domain.DTO;
+using MusicTube.Domain.DTO.DomainDTO;
 using MusicTube.Domain.Enumerations;
 using MusicTube.Domain.Identity;
 using MusicTube.Repository.Interface;
