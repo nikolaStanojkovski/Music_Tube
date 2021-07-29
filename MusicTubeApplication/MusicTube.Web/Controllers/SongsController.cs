@@ -67,7 +67,7 @@ namespace MusicTube.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
-            SongDto song = songService.GetSongDto(user);
+            SongDto song = songService.GetCreateDto(user);
             return View(song);
         }
 
@@ -87,17 +87,44 @@ namespace MusicTube.Web.Controllers
                     fileStream.Flush();
                 }
 
-                songService.CreateSong(user, song, fileName);
+                await songService.CreateSong(user, song, fileName);
 
                 return RedirectToAction("Index", "Songs");
             }
             return View(song);
         }
 
-        // GET: Songs/Delete/5
-        public IActionResult Delete(Guid? songId)
+        public async Task<IActionResult> Edit(Guid? songId)
         {
-            songService.DeleteSong(songId);
+            var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+            SongDto songDto = songService.GetEditDto(user, songId);
+            return View(songDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([Bind("Id,Name,Label,AlbumId,Description,Genre")] SongDto song)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+                await songService.EditSong(user, song);
+                return RedirectToAction("Details", "Songs", new { songId = song.Id });
+            }
+
+            return View(song);
+        }
+
+        public IActionResult Details(Guid? songId)
+        {
+            var model = songService.GetDetailsDto(songId);
+
+            return View(model);
+        }
+
+        // GET: Songs/Delete/5
+        public async Task<IActionResult> Delete(Guid? songId)
+        {
+            await songService.DeleteSong(songId);
 
             return RedirectToAction("Index", "Songs");
         }
@@ -115,7 +142,7 @@ namespace MusicTube.Web.Controllers
         {
             songService.AddSongToAlbum(model);
 
-            return RedirectToAction("Index", "Songs");
+            return RedirectToAction("Details", "Songs", new { songId = model.SongId });
         }
 
         public IActionResult GiveFeedback(Boolean liking, Guid songId, String comment)
@@ -123,7 +150,7 @@ namespace MusicTube.Web.Controllers
             var user = userManager.FindByEmailAsync(User.Identity.Name).Result;
             songService.CreateFeedbackForSong(user, liking, songId, comment);
 
-            return RedirectToAction("Index", "Songs");
+            return RedirectToAction("Details", "Songs", new { songId = songId });
         }
 
         public IActionResult GiveReview(Guid songId, String summary, String description, String rating)
@@ -131,7 +158,7 @@ namespace MusicTube.Web.Controllers
             var user = (Listener) userManager.FindByEmailAsync(User.Identity.Name).Result;
             songService.UpdateReviewForSong(user, songId, summary, description, rating);
 
-            return RedirectToAction("Index", "Songs");
+            return RedirectToAction("Details", "Songs", new { songId = songId });
         }
 
         public IActionResult FilterSongs(Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)

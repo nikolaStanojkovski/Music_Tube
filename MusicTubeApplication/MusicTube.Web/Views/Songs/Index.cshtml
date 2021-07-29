@@ -242,195 +242,46 @@
                         </div>
 
                         <div class="card-body text-center align-items-bottom">
-                            <div style="height:130px;">
+                            <div style="height:75px;">
                                 <h5 class="font-weight-bold text-white">@item.Name - @item.Creator.ArtistName</h5>
                                 @if (item.AlbumId != null)
                                 {
                                     <h6 class="text-warning">Song is part of <b>@item.Album.AlbumName</b> album</h6>
                                 }
-                                <p class="text-center">@item.Genre</p>
-                                <p class="mb-0 text-light">@item.Description</p>
                             </div>
 
-                            <audio class="mt-3" controls type="audio/mpeg">
+                            <audio class="mt-4" controls type="audio/mpeg">
                                 <source src="~/custom/files/audio/@item.AudioURL">
                             </audio>
                         </div>
 
                         <div class="card-footer" style="background-color: #51575c;">
                             <div class="row">
-                                @if (User.IsInRole("Creator") && item.Creator.Email.Equals(User.Identity.Name))
-                                {
-
-                                    @if (item.AlbumId == null)
-                                    {
-                                        <div class="col-6">
-                                            <a class="btn btn-info btn-block" asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@item.Id">Add to album</a>
-                                        </div>
-                                        <div class="col-6">
-                                            <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deleteModal-@item.Id">
-                                                Delete
-                                            </button>
-                                        </div>
+                                <div class="col-7">
+                                    @{
+                                        var averageRating = 0.0;
+                                        if (item.Reviews != null && item.Reviews.Count != 0)
+                                            averageRating = item.Reviews.Average(z => z.Rating);
                                     }
-                                    else // if its not in an album
-                                    {
-                                        <div class="col-12">
-                                            <button type="button" class="btn btn-danger btn-block" data-toggle="modal" data-target="#deleteModal-@item.Id">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    }
-
-                                }
-                                else if (User.IsInRole("Creator"))
-                                {
-                                    <div class="col-12">
-                                        <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#feedbackModal-@item.Id">
-                                            Give Feedback
-                                        </button>
-                                    </div>
-                                }
-                                else if (User.IsInRole("Listener"))
-                                {
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-info btn-block" data-toggle="modal" data-target="#feedbackModal-@item.Id">
-                                            Give Feedback
-                                        </button>
-                                    </div>
-                                    <div class="col-6">
-                                        <button type="button" class="btn btn-warning btn-block" data-toggle="modal" data-target="#reviewModal-@item.Id">
-                                            Give Review
-                                        </button>
-                                    </div>
-                                }
-
-                                <!-- Modal Feedback -->
-                                <div class="modal fade" id="feedbackModal-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <form method="post" asp-controller="Songs" asp-action="GiveFeedback">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title text-dark" id="exampleModalLabel">Rate the song <b class="text-warning">@item.Name</b></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body text-dark">
-                                                    <div class="form-group">
-                                                        <div class="btn-group my-2" data-toggle="buttons">
-                                                            <input hidden class="songId" name="songId" value="@item.Id" />
-                                                            <label class="btn btn-primary mr-3">
-                                                                <input type="radio" value="true" name="liking" id="like-@item.Id"> Like
-                                                            </label>
-                                                            <label class="btn btn-secondary">
-                                                                <input type="radio" value="false" name="liking" id="like-@item.Id"> Dislike
-                                                            </label>
-                                                        </div>
-                                                        <textarea placeholder="Add a comment..." class="form-control my-1" rows="3" id="comment" name="comment"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        Save Changes
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
+                                    <div class="col-12 text-center mt-2" style="font-size: 14px;">
+                                        @for (var r = 1; r <= (int)averageRating; r++)
+                                        {
+                                            <span>
+                                                <i class="fas fa-star checked mr-2"></i>
+                                            </span>
+                                        }
+                                        @for (var r = 1; r <= (5 - (int)averageRating); r++)
+                                        {
+                                            <span>
+                                                <i class="fas fa-star mr-2"></i>
+                                            </span>
+                                        }
                                     </div>
                                 </div>
-
-                                <!-- Modal Review -->
-                                <div class="modal fade" id="reviewModal-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <form method="post" asp-controller="Songs" asp-action="GiveReview">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title text-dark" id="exampleModalLabel">Create Review for <b class="text-warning">@item.Name</b></h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-                                                </div>
-                                                <div class="modal-body text-dark">
-                                                    <div class="form-group">
-                                                        <input hidden class="songId" name="songId" value="@item.Id" />
-                                                        <input class="form-control my-3 summary" name="summary" placeholder="Summary..." />
-                                                        <textarea placeholder="Description..." name="description" class="form-control my-1 description" rows="5"></textarea>
-                                                        <input class="form-control my-3 rating" name="rating" placeholder="Rating [1 - 5]..." />
-                                                    </div>
-                                                    <div class="star-rating text-center" style="font-size: 30px;">
-                                                        <label value="1" class="btn mr-1 star" star-id="1">
-                                                            <i class="fas fa-star"></i>
-                                                        </label>
-                                                        <label class="btn mr-1 star" star-id="2">
-                                                            <i class="fas fa-star"></i>
-                                                        </label>
-                                                        <label class="btn mr-1 star" star-id="3">
-                                                            <i class="fas fa-star"></i>
-                                                        </label>
-                                                        <label class="btn mr-1 star" star-id="4">
-                                                            <i class="fas fa-star"></i>
-                                                        </label>
-                                                        <label class="btn mr-1 star" star-id="5">
-                                                            <i class="fas fa-star"></i>
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        Save Changes
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-
-                                <!-- Modal Delete -->
-                                <div class="modal fade" id="deleteModal-@item.Id" tabindex="-1" role="dialog" aria-hidden="true">
-                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title text-dark" id="exampleModalLabel">Delete Song <b class="text-warning">@item.Name</b></h5>
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body text-dark">
-                                                Are you sure you want to delete this song? It will also be removed from the album it is in.
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                <a asp-controller="Songs" asp-action="Delete" asp-route-songId="@item.Id" class="btn btn-danger">
-                                                    Delete Song
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                @{
-                                    var averageRating = 0.0;
-                                    if (item.Reviews != null && item.Reviews.Count != 0)
-                                        averageRating = item.Reviews.Average(z => z.Rating);
-                                }
-                                <div class="col-12 text-center mt-3" style="font-size: 25px;">
-                                    @for (var r = 1; r <= (int)averageRating; r++)
-                                    {
-                                        <span>
-                                            <i class="fas fa-star checked mr-2"></i>
-                                        </span>
-                                    }
-                                    @for (var r = 1; r <= (5 - (int)averageRating); r++)
-                                    {
-                                        <span>
-                                            <i class="fas fa-star mr-2"></i>
-                                        </span>
-                                    }
+                                <div class="col-5">
+                                    <a class="btn btn-info btn-block" asp-controller="Songs" asp-action="Details" asp-route-songId="@item.Id">
+                                        Details
+                                    </a>
                                 </div>
                             </div>
                         </div>

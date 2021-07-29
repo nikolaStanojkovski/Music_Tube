@@ -864,3 +864,6 @@ C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\MailKit.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\MimeKit.dll
 C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\bin\Debug\net5.0\BouncyCastle.Crypto.dll
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Edit.cshtml.g.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Videos\Edit.cshtml.g.cs
+C:\Users\Nick\Documents\GitHub\Music_Tube\MusicTubeApplication\MusicTube.Web\obj\Debug\net5.0\Razor\Views\Songs\Details.cshtml.g.cs

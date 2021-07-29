@@ -26,6 +26,8 @@ namespace MusicTube.Repository
         public virtual DbSet<UserFeedback> UserFeedbacks { get; set; }
         public virtual DbSet<Review> Reviews { get; set; }
 
+        public virtual DbSet<EmailMessage> EmailMessages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             foreach (var relationship in builder.Model.GetEntityTypes().SelectMany(e => e.GetForeignKeys()))

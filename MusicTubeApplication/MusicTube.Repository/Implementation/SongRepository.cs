@@ -23,9 +23,11 @@ namespace MusicTube.Repository.Implementation
         public List<Song> ReadAllSongs()
         {
             return entities
-                .Include(z => z.Creator)
-                .Include(z => z.Feedbacks)
                 .Include(z => z.Reviews)
+                .Include("Reviews.Listener")
+                .Include(z => z.Feedbacks)
+                .Include("Feedbacks.User")
+                .Include(z => z.Creator)
                 .Include(z => z.Album)
                 .ToListAsync().Result;
         }
@@ -35,8 +37,11 @@ namespace MusicTube.Repository.Implementation
         public Song ReadSong(Guid? id)
         {
             return entities
-                .Include(z => z.Creator)
+                .Include(z => z.Reviews)
+                .Include("Reviews.Listener")
                 .Include(z => z.Feedbacks)
+                .Include("Feedbacks.User")
+                .Include(z => z.Creator)
                 .SingleOrDefaultAsync(z => z.Id.Equals(id)).Result;
         }
 

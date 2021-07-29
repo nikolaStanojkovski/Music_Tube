@@ -1,4 +1,5 @@
-﻿using MusicTube.Domain.Domain;
+﻿using MusicTube.Domain;
+using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
 using MusicTube.Domain.DTO.DomainDTO;
@@ -22,17 +23,29 @@ namespace MusicTube.Service.Implementation
         private readonly IRepository<UserFeedback> feedbackRepository;
         private readonly IRepository<Review> reviewRepository;
 
+        // for newsletters
+        private readonly IRepository<EmailMessage> emailRepository;
+        private readonly EmailSettings emailSettings;
+        private readonly BackgroundEmailSender emailSender;
+
         public VideoService(IVideoRepository _videoRepository,
             ISongRepository _songRepository,
             IUserRepository _userRepository,
             IRepository<UserFeedback> _feedbackRepository,
-            IRepository<Review> _reviewRepository)
+            IRepository<Review> _reviewRepository,
+
+            EmailSettings _emailSettings,
+            IRepository<EmailMessage> _emailRepository)
         {
             this.videoRepository = _videoRepository;
             this.songRepository = _songRepository;
             this.userRepository = _userRepository;
             this.feedbackRepository = _feedbackRepository;
             this.reviewRepository = _reviewRepository;
+
+            this.emailRepository = _emailRepository;
+            this.emailSettings = _emailSettings;
+            this.emailSender = new BackgroundEmailSender(new EmailService(_emailSettings), emailRepository);
         }
 
         public List<Video> GetAllVideos()
@@ -45,7 +58,7 @@ namespace MusicTube.Service.Implementation
             return videoRepository.ReadVideo(videoId);
         }
 
-        public Video CreateVideo(Creator user, VideoDto video, string videoURL)
+        public async Task<Video> CreateVideo(Creator user, VideoDto video, string videoURL)
         {
             Song song = null;
             Video videoToCreate;
@@ -99,16 +112,124 @@ namespace MusicTube.Service.Implementation
                 };
             }
 
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(videoToCreate.CreatorId)).ToList();
+            if(subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + videoToCreate.Creator.Name);
+                content.AppendLine("Video name: " + videoToCreate.Name);
+                content.AppendLine("Video description: " + videoToCreate.Description);
+                content.AppendLine("Label published on: " + videoToCreate.Label);
+
+                foreach(var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "New video uploaded by " + videoToCreate.Creator.Name + " " + videoToCreate.Creator.Surname + " (" + videoToCreate.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+
             videoRepository.CreateVideo(videoToCreate);
             userRepository.UpdateUser(user);
 
+            await emailSender.DoWork();
+
             return videoToCreate;
         }
+        
+        public async Task<Video> EditVideo(Creator user, VideoDto videoToEdit)
+        {
+            user = userRepository.ReadCreatorInformation(user.Id);
+            Video video = videoRepository.ReadVideo(videoToEdit.Id);
 
-        public Video DeleteVideo(Guid? videoId)
+            if (videoToEdit.Name != null && !videoToEdit.Name.Equals(""))
+                video.Name = videoToEdit.Name;
+
+            if (videoToEdit.Label != null && !videoToEdit.Label.Equals(""))
+                video.Label = videoToEdit.Label;
+
+            if (videoToEdit.Description != null && !videoToEdit.Description.Equals(""))
+                video.Description = videoToEdit.Description;
+
+            if (videoToEdit.Genre != null)
+                video.Genre = videoToEdit.Genre;
+
+            if (videoToEdit.SongId != null)
+            {
+                Song song = songRepository.ReadSong(videoToEdit.SongId);
+                if (song != null)
+                {
+                    video.Song = song;
+                    video.SongId = song.Id;
+                }
+            }
+
+            videoRepository.UpdateVideo(video);
+
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(video.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + video.Creator.Name);
+                content.AppendLine("Video name: " + video.Name);
+                content.AppendLine("Video description: " + video.Description);
+                content.AppendLine("Label published on: " + video.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "Video updated by " + video.Creator.Name + " " + video.Creator.Surname + " (" + video.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+            await emailSender.DoWork();
+
+            return video;
+        }
+
+        public async Task<Video> DeleteVideo(Guid? videoId)
         {
             Video video = ReadVideo(videoId);
             videoRepository.DeleteVideo(video);
+
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(video.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + video.Creator.Name);
+                content.AppendLine("Video name: " + video.Name);
+                content.AppendLine("Video description: " + video.Description);
+                content.AppendLine("Label published on: " + video.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "Video deleted by " + video.Creator.Name + " " + video.Creator.Surname + " (" + video.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+            await emailSender.DoWork();
 
             return video;
         }
@@ -132,6 +253,27 @@ namespace MusicTube.Service.Implementation
             {
                 AllSongs = currentUserSongs,
                 Creator = user
+            };
+        }
+
+        public VideoDto GetEditDto(Creator user, Guid? videoId)
+        {
+            user = userRepository.ReadCreatorInformation(user.Id);
+            Video existingVideo = ReadVideo(videoId);
+            List<Song> allSongs = songRepository.ReadAllSongs();
+
+            return new VideoDto()
+            {
+                Id = existingVideo.Id,
+                Name = existingVideo.Name,
+                Label = existingVideo.Label,
+                Description = existingVideo.Description,
+                Genre = existingVideo.Genre,
+                Creator = user,
+                VideoURL = existingVideo.VideoURL,
+                Song = existingVideo.Song,
+                SongId = existingVideo.SongId,
+                AllSongs = allSongs
             };
         }
 

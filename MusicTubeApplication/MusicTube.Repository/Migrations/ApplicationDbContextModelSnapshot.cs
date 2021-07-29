@@ -200,6 +200,29 @@ namespace MusicTube.Repository.Migrations
                     b.ToTable("Albums");
                 });
 
+            modelBuilder.Entity("MusicTube.Domain.Domain.EmailMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MailTo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailMessages");
+                });
+
             modelBuilder.Entity("MusicTube.Domain.Domain.Media", b =>
                 {
                     b.Property<Guid>("Id")

@@ -45,9 +45,15 @@ namespace MusicTube.Web
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string conn = Configuration.GetConnectionString("DefaultConnection");
+            if (conn.Contains("%CONTENTROOTPATH%"))
+            {
+                conn = conn.Replace("%CONTENTROOTPATH%", _contentRootPath);
+            }
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(conn));  //use conn
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddDefaultIdentity<MusicTubeUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -84,10 +90,10 @@ namespace MusicTube.Web
 
             // E-mail configurations
 
-            /* services.AddScoped<EmailSettings>(es => _emailSettings);
+            services.AddScoped<EmailSettings>(es => _emailSettings);
             services.AddScoped<IEmailService, EmailService>(email => new EmailService(_emailSettings));
             services.AddScoped<IBackgroundEmailSender, BackgroundEmailSender>();
-            services.AddHostedService<ConsumeScopedHostedService>(); */
+            services.AddHostedService<ConsumeScopedHostedService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

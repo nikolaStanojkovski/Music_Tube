@@ -14,16 +14,20 @@ namespace MusicTube.Service.Interface
     {
         public List<Video> GetAllVideos();
 
-        public Video CreateVideo(Creator user, VideoDto video, String videoURL);
-
         public Video ReadVideo(Guid? videoId);
 
-        public Video DeleteVideo(Guid? videoId);
+        public Task<Video> CreateVideo(Creator user, VideoDto video, String videoURL);
+
+        public Task<Video> EditVideo(Creator user, VideoDto videoToEdit);
+
+        public Task<Video> DeleteVideo(Guid? videoId);
 
 
         public VideoDto GetVideoDto(Creator user);
 
         public VideoDto GetDetailsDto(Guid? videoId);
+
+        public VideoDto GetEditDto(Creator user, Guid? videoId);
 
 
         public void CreateFeedbackForVideo(MusicTubeUser user, Boolean liking, Guid videoId, String comment);

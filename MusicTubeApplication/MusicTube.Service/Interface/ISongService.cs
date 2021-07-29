@@ -15,14 +15,20 @@ namespace MusicTube.Service.Interface
     {
         public List<Song> GetAllSongs();
 
-        public Song CreateSong(Creator user, SongDto song, String songURL);
+        public Task<Song> CreateSong(Creator user, SongDto song, String songURL);
 
         public Song ReadSong(Guid? songId);
 
-        public Song DeleteSong(Guid? songId);
+        public Task<Song> EditSong(Creator user, SongDto songToEdit);
+
+        public Task<Song> DeleteSong(Guid? songId);
 
 
-        public SongDto GetSongDto(Creator user);
+        public SongDto GetCreateDto(Creator user);
+
+        public SongDto GetEditDto(Creator user, Guid? songId);
+
+        public SongDto GetDetailsDto(Guid? songId);
 
         public SongAlbumDto GetSongAlbumDto(Creator user, Guid? songId);
 

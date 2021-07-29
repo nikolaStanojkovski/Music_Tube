@@ -1,4 +1,5 @@
-﻿using MusicTube.Domain.Domain;
+﻿using MusicTube.Domain;
+using MusicTube.Domain.Domain;
 using MusicTube.Domain.Domain.Subdomain;
 using MusicTube.Domain.DTO;
 using MusicTube.Domain.DTO.DomainDTO;
@@ -23,17 +24,29 @@ namespace MusicTube.Service.Implementation
         private readonly IRepository<UserFeedback> feedbackRepository;
         private readonly IRepository<Review> reviewRepository;
 
+        // for newsletters
+        private readonly IRepository<EmailMessage> emailRepository;
+        private readonly EmailSettings emailSettings;
+        private readonly BackgroundEmailSender emailSender;
+
         public SongService(ISongRepository _songRepository,
             IRepository<Album> _albumRepository,
             IUserRepository _userRepository,
             IRepository<UserFeedback> _feedbackRepository,
-            IRepository<Review> _reviewRepository)
+            IRepository<Review> _reviewRepository,
+
+            EmailSettings _emailSettings,
+            IRepository<EmailMessage> _emailRepository)
         {
             this.songRepository = _songRepository;
             this.userRepository = _userRepository;
             this.albumRepository = _albumRepository;
             this.feedbackRepository = _feedbackRepository;
             this.reviewRepository = _reviewRepository;
+
+            this.emailRepository = _emailRepository;
+            this.emailSettings = _emailSettings;
+            this.emailSender = new BackgroundEmailSender(new EmailService(_emailSettings), emailRepository);
         }
 
         public List<Song> GetAllSongs()
@@ -41,23 +54,12 @@ namespace MusicTube.Service.Implementation
             return songRepository.ReadAllSongs();
         }
 
-        public SongDto GetSongDto(Creator user)
+        public Song ReadSong(Guid? songId)
         {
-            List<Album> currentUserAlbums = new List<Album>();
-            user = userRepository.ReadCreatorInformation(user.Id);
-            if (user.PremiumPlan != null)
-                currentUserAlbums = albumRepository.ReadAll()
-                    .Where(z => z.PremiumUserId.Equals(user.PremiumPlanId))
-                    .ToList();
-
-            return new SongDto()
-            {
-                AllAlbums = currentUserAlbums,
-                Creator = user
-            };
+            return songRepository.ReadSong(songId);
         }
 
-        public Song CreateSong(Creator user, SongDto song, string songURL)
+        public async Task<Song> CreateSong(Creator user, SongDto song, string songURL)
         {
             Album album = null;
             Song songToCreate;
@@ -87,7 +89,8 @@ namespace MusicTube.Service.Implementation
                     AlbumId = song.AlbumId,
                     VideosAppearedIn = new List<Video>()
                 };
-            } else
+            }
+            else
             {
                 songToCreate = new Song
                 {
@@ -111,18 +114,96 @@ namespace MusicTube.Service.Implementation
                 };
             }
 
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(songToCreate.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + songToCreate.Creator.Name);
+                content.AppendLine("Song name: " + songToCreate.Name);
+                content.AppendLine("Song description: " + songToCreate.Description);
+                content.AppendLine("Label published on: " + songToCreate.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "New song uploaded by " + songToCreate.Creator.Name + " " + songToCreate.Creator.Surname + " (" + songToCreate.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+
             songRepository.CreateSong(songToCreate);
             userRepository.UpdateUser(user);
+
+            await emailSender.DoWork();
 
             return songToCreate;
         }
 
-        public Song ReadSong(Guid? songId)
+        public async Task<Song> EditSong(Creator user, SongDto songToEdit)
         {
-            return songRepository.ReadSong(songId);
+            user = userRepository.ReadCreatorInformation(user.Id);
+            Song song = songRepository.ReadSong(songToEdit.Id);
+
+            if (songToEdit.Name != null && !songToEdit.Name.Equals(""))
+                song.Name = songToEdit.Name;
+
+            if (songToEdit.Label != null && !songToEdit.Label.Equals(""))
+                song.Label = songToEdit.Label;
+
+            if (songToEdit.Description != null && !songToEdit.Description.Equals(""))
+                song.Description = songToEdit.Description;
+
+            if (songToEdit.Genre != null)
+                song.Genre = songToEdit.Genre;
+
+            if (songToEdit.AlbumId != null)
+            {
+                Album album = albumRepository.Read(songToEdit.AlbumId);
+                if (song != null)
+                {
+                    song.Album = album;
+                    song.AlbumId = song.AlbumId;
+                }
+            }
+
+            songRepository.UpdateSong(song);
+
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(song.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + song.Creator.Name);
+                content.AppendLine("Song name: " + song.Name);
+                content.AppendLine("Song description: " + song.Description);
+                content.AppendLine("Label published on: " + song.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "Song updated by " + song.Creator.Name + " " + song.Creator.Surname + " (" + song.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+            await emailSender.DoWork();
+
+            return song;
         }
 
-        public Song DeleteSong(Guid? songId)
+        public async Task<Song> DeleteSong(Guid? songId)
         {
             Song songToDelete = ReadSong(songId);
             songRepository.DeleteSong(songToDelete);
@@ -130,7 +211,115 @@ namespace MusicTube.Service.Implementation
             string rootFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\files\\audio";
             File.Delete(Path.Combine(rootFolder, songToDelete.AudioURL)); // delete the file with the song in it
 
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(songToDelete.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + songToDelete.Creator.Name);
+                content.AppendLine("Song name: " + songToDelete.Name);
+                content.AppendLine("Song description: " + songToDelete.Description);
+                content.AppendLine("Label published on: " + songToDelete.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "Song deleted by " + songToDelete.Creator.Name + " " + songToDelete.Creator.Surname + " (" + songToDelete.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+
+            await emailSender.DoWork();
+
             return songToDelete;
+        }
+
+
+
+        public SongDto GetCreateDto(Creator user)
+        {
+            List<Album> currentUserAlbums = new List<Album>();
+            user = userRepository.ReadCreatorInformation(user.Id);
+            if (user.PremiumPlan != null)
+                currentUserAlbums = albumRepository.ReadAll()
+                    .Where(z => z.PremiumUserId.Equals(user.PremiumPlanId))
+                    .ToList();
+
+            return new SongDto()
+            {
+                AllAlbums = currentUserAlbums,
+                Creator = user
+            };
+        }
+
+        public SongDto GetDetailsDto(Guid? songId)
+        {
+            var song = songRepository.ReadSong(songId);
+            Album album = null;
+            if(song.AlbumId != null)
+                album = albumRepository.Read(song.AlbumId);
+
+            if(album != null)
+            {
+                return new SongDto()
+                {
+                    Id = song.Id,
+                    Name = song.Name,
+                    Label = song.Label,
+                    Description = song.Description,
+                    Creator = song.Creator,
+                    Feedbacks = song.Feedbacks,
+                    Genre = song.Genre,
+                    Reviews = song.Reviews,
+                    Album = album,
+                    AlbumId = album.Id,
+                    AudioURL = song.AudioURL
+                };
+            } else
+            {
+                return new SongDto()
+                {
+                    Id = song.Id,
+                    Name = song.Name,
+                    Label = song.Label,
+                    Description = song.Description,
+                    Creator = song.Creator,
+                    Feedbacks = song.Feedbacks,
+                    Genre = song.Genre,
+                    Reviews = song.Reviews,
+                    AudioURL = song.AudioURL
+                };
+            }
+        }
+
+        public SongDto GetEditDto(Creator user, Guid? songId)
+        {
+            user = userRepository.ReadCreatorInformation(user.Id);
+            Song existingSong = ReadSong(songId);
+            List<Album> allAlbums = albumRepository.ReadAll()
+                .Where(z => z.PremiumUserId.Equals(user.PremiumPlanId)).ToList();
+
+            return new SongDto()
+            {
+                Id = existingSong.Id,
+                Name = existingSong.Name,
+                Label = existingSong.Label,
+                Description = existingSong.Description,
+                Genre = existingSong.Genre,
+                Creator = user,
+                AudioURL = existingSong.AudioURL,
+
+                AlbumId = existingSong.AlbumId,
+                Album = existingSong.Album,
+
+                AllAlbums = allAlbums
+            };
         }
 
         public SongAlbumDto GetSongAlbumDto(Creator user, Guid? songId)
@@ -147,6 +336,8 @@ namespace MusicTube.Service.Implementation
                 SongId = songId.Value
             };
         }
+
+
 
         public void AddSongToAlbum(SongAlbumDto model)
         {
@@ -227,6 +418,7 @@ namespace MusicTube.Service.Implementation
             songRepository.UpdateSong(song);
         }
 
+
         public List<Song> SearchSongs(string text)
         {
             List<Song> allSongs = GetAllSongs();
@@ -290,6 +482,7 @@ namespace MusicTube.Service.Implementation
 
             return filteredSongs;
         }
+
 
         public List<Song> GetSongsForArtist(string artistId)
         {

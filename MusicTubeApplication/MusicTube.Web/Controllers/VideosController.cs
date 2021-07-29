@@ -77,10 +77,30 @@ namespace MusicTube.Web.Controllers
                     fileStream.Flush();
                 }
 
-                videoService.CreateVideo(user, video, fileName);
+                await videoService.CreateVideo(user, video, fileName);
 
                 return RedirectToAction("Index", "Videos");
             }
+            return View(video);
+        }
+
+        public async Task<IActionResult> Edit(Guid? videoId)
+        {
+            var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+            VideoDto videoDto = videoService.GetEditDto(user, videoId);
+            return View(videoDto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit([Bind("Id,Name,Label,SongId,Description,Genre")] VideoDto video)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = (Creator)await userManager.FindByEmailAsync(User.Identity.Name);
+                await videoService.EditVideo(user, video);
+                return RedirectToAction("Details", "Videos", new { videoId = video.Id });
+            }
+
             return View(video);
         }
 
@@ -107,9 +127,9 @@ namespace MusicTube.Web.Controllers
             return RedirectToAction("Details", new { videoId = videoId });
         }
 
-        public IActionResult Delete(Guid? videoId)
+        public async Task<IActionResult> Delete(Guid? videoId)
         {
-            videoService.DeleteVideo(videoId);
+            await videoService.DeleteVideo(videoId);
 
             return RedirectToAction("Details", new { videoId = videoId });
         }
