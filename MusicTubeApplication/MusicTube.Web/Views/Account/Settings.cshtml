@@ -1,4 +1,4 @@
-﻿@model MusicTube.Domain.DTO.UserSettingsDto
+﻿@model MusicTube.Domain.DTO.IdentityDTO.UserSettingsDto
 @using MusicTube.Domain.Identity
 
 @{
@@ -23,19 +23,13 @@
     <script src="~/custom/js/bootstrap.js"></script>
 </head>
 
-<div class="container">
+<div class="container my-4">
     @Html.ValidationSummary()
 
     <div class="container px-5 my-5 pb-5" style="border-radius: 10px;">
 
-        <div class="row mb-5">
-            <div class="col text-center text-light">
-                <h1 class="lead display-4 font-weight-light">Account Settings</h1>
-            </div>
-        </div>
-
         <h4 class="text-light">Personal Information</h4>
-        <hr class="w-100 text-light my-4" />
+        <div class="bg-secondary mt-3 mb-4" style="height: 2px;"></div>
 
         <!-- Personal Information -->
 
@@ -165,7 +159,7 @@
         @if (Model.CurrentUser.GetType().Name.Equals("Creator"))
         {
             <h4 class="mt-1 text-light">Creator Information</h4>
-            <hr class="w-100 my-4" style="height: 3px; color: white;" />
+            <div class="bg-secondary mt-3 mb-4" style="height: 2px;"></div>
 
             <!-- Creator Specific Information -->
     <form asp-action="SettingsCreatorInfo" asp-controller="Account" method="post">
@@ -293,8 +287,7 @@
     </form>
 
             <!-- Media Content Information -->
-            <h4 class="mt-1 text-light">Media Content</h4>
-            <hr class="w-100 my-4" style="height: 3px; color: white;" />
+            <h4 class="mt-1 text-light mb-4">Media Content</h4>
 
             <div class="row form-group mb-4">
                 <div class="col-12">
@@ -372,7 +365,6 @@
         else
         {
             <h4 class="mt-1 text-light">Reviews</h4>
-            <hr class="w-100 h-100 text-secondary my-4" style="height: 2px;" />
 
             <div class="row form-group mb-4">
                 <div class="col-12">
@@ -427,8 +419,6 @@
                 </div>
             </div>
         }
-
-        <hr class="w-100 text-secondary my-4" />
 
         <a class="btn btn-block btn-danger" asp-action="Logout" asp-controller="Account">
             Logout
