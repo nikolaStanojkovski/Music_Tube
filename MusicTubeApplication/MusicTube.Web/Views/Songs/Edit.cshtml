@@ -65,13 +65,11 @@
                 @if (Model.AlbumId != null)
                 {
                     @Html.DropDownListFor(z => z.AlbumId, new SelectList(Model.AllAlbums, "Id", "AlbumName", Model.Album.AlbumName),
-                                                                                                "Select the album you want the song to appear on",
                                                                                                 new { @class = "form-control" })
                 }
                 else
                 {
                     @Html.DropDownListFor(z => z.AlbumId, new SelectList(Model.AllAlbums, "Id", "AlbumName"),
-                                                                                                    "Select the album you want the song to appear on",
                                                                                                     new { @class = "form-control" })
                 }
             </div>

@@ -131,7 +131,7 @@ namespace MusicTube.Web.Controllers
         {
             await videoService.DeleteVideo(videoId);
 
-            return RedirectToAction("Details", new { videoId = videoId });
+            return RedirectToAction("Index", "Videos");
         }
 
         public IActionResult FilterVideos(Guid? songFilter, Genre genreFilter, String nameFilter, String descriptionFilter, String labelFilter)

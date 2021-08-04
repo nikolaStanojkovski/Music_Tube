@@ -76,9 +76,12 @@
                 </button>
                 @if (Model.Creator.PremiumPlanId != null)
                 {
-                    <a asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@Model.Id" class="btn btn-info ml-2">
-                        Add Song to Album
-                    </a>
+                    if (Model.AlbumId == null || Model.AlbumId == Guid.Empty)
+                    {
+                        <a asp-controller="Songs" asp-action="AddSongToAlbum" asp-route-songId="@Model.Id" class="btn btn-info ml-2">
+                            Add Song to Album
+                        </a>
+                    }
                 }
             }
         </div>

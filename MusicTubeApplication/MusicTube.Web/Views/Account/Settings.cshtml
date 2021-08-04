@@ -308,12 +308,12 @@
                                 {
                                     foreach (var media in Model.Content)
                                     {
-                                        <tr>
-                                            <td>@media.Name</td>
-                                            <td>@media.Description</td>
-                                            <td>@media.Label</td>
-                                            <td>@media.Genre</td>
-                                            <td>
+                                        <tr class="align-middle">
+                                            <td class="align-middle">@media.Name</td>
+                                            <td class="align-middle">@media.Description</td>
+                                            <td class="align-middle">@media.Label</td>
+                                            <td class="align-middle">@media.Genre</td>
+                                            <td style="font-size: 12.5px;" class="align-middle">
                                                 @{
                                                     var averageRating = 0;
                                                     if (Model.Reviews != null && Model.Reviews.Count != 0)
@@ -329,12 +329,12 @@
                                                     }
                                                 }
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <div class="row">
                                                     @if (media.GetType().Name.Equals("Song"))
                                                     {
                                                         <div class="col-6">
-                                                            <a asp-controller="Songs" asp-action="Index" asp-route-songId="@media.Id" class="btn btn-outline-info btn-block">View Song</a>
+                                                            <a asp-controller="Songs" asp-action="Details" asp-route-songId="@media.Id" class="btn btn-outline-info btn-block">View</a>
                                                         </div>
                                                         <div class="col-6">
                                                             <a asp-controller="Songs" asp-action="Delete" asp-route-songId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>
@@ -343,7 +343,7 @@
                                                     else
                                                     {
                                                         <div class="col-6">
-                                                            <a asp-controller="Videos" asp-action="Index" asp-route-videoId="@media.Id" class="btn btn-outline-info btn-block">View Video</a>
+                                                            <a asp-controller="Videos" asp-action="Details" asp-route-videoId="@media.Id" class="btn btn-outline-info btn-block">View</a>
                                                         </div>
                                                         <div class="col-6">
                                                             <a asp-controller="Videos" asp-action="Delete" asp-route-videoId="@media.Id" class="btn btn-outline-danger btn-block">Delete</a>
@@ -364,7 +364,7 @@
         }
         else
         {
-            <h4 class="mt-1 text-light">Reviews</h4>
+            <h4 class="mt-1 mb-4 text-warning">Reviews</h4>
 
             <div class="row form-group mb-4">
                 <div class="col-12">
@@ -385,10 +385,10 @@
                                     foreach (var review in Model.Reviews)
                                     {
                                         <tr>
-                                            <td>@review.Summary</td>
-                                            <td>@review.Description</td>
-                                            <td>@review.Media.Name</td>
-                                            <td>
+                                            <td class="align-middle">@review.Summary</td>
+                                            <td class="align-middle">@review.Description</td>
+                                            <td class="align-middle">@review.Media.Name</td>
+                                            <td class="align-middle" style="font-size: 14px;">
                                                 @{
                                                     var averageRating = review.Rating;
 
@@ -402,7 +402,7 @@
                                                     }
                                                 }
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <div class="row">
                                                     <div class="col-12">
                                                         <a asp-controller="Account" asp-action="RemoveReview" asp-route-reviewId="@review.Id" class="btn btn-outline-danger btn-block">Remove</a>

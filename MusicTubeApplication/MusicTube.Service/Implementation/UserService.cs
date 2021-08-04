@@ -334,19 +334,26 @@ namespace MusicTube.Service.Implementation
         {
             PremiumPlan premiumPlan = user.PremiumPlan;
             
-            if(premiumPlan.Albums != null && premiumPlan.Albums.Count != 0)
+            if(premiumPlan == null)
             {
-                StringBuilder sb = new StringBuilder();
-                var counter = 1;
-                foreach (var album in premiumPlan.Albums)
-                {
-                    sb.AppendLine(counter + ". " + album.AlbumName + " - Genre: " + album.AlbumGenre);
-                }
-
-                return sb.ToString();
+                return "The user has no premium subscription so he can upload albums";
             } else
             {
-                return "The creator has no albums.";
+                if (premiumPlan.Albums != null && premiumPlan.Albums.Count != 0)
+                {
+                    StringBuilder sb = new StringBuilder();
+                    var counter = 1;
+                    foreach (var album in premiumPlan.Albums)
+                    {
+                        sb.AppendLine(counter + ". " + album.AlbumName + " - Genre: " + album.AlbumGenre);
+                    }
+
+                    return sb.ToString();
+                }
+                else
+                {
+                    return "The creator has no albums.";
+                }
             }
         }
 
@@ -364,6 +371,7 @@ namespace MusicTube.Service.Implementation
                 foreach (var song in songs)
                 {
                     sb.AppendLine(counter + ". " + song.Name + " - Genre: " + song.Genre + ", Label: " + song.Label);
+                    counter++;
                 }
 
                 return sb.ToString();
@@ -386,7 +394,14 @@ namespace MusicTube.Service.Implementation
                 var counter = 1;
                 foreach (var video in videos)
                 {
-                    sb.AppendLine(counter + ". " + video.Name + ", Song: " + video.Song.Name);
+                    if(video.Song != null)
+                    {
+                        sb.AppendLine(counter + ". " + video.Name + ", Song: " + video.Song.Name);
+                    } else
+                    {
+                        sb.AppendLine(counter + ". " + video.Name);
+                    }
+                    counter++;
                 }
 
                 return sb.ToString();

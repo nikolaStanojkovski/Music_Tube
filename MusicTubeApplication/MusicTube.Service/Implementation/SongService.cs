@@ -114,34 +114,10 @@ namespace MusicTube.Service.Implementation
                 };
             }
 
-            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(songToCreate.CreatorId)).ToList();
-            if (subscribedUsers != null && subscribedUsers.Count != 0)
-            {
-                StringBuilder content = new StringBuilder();
-                content.AppendLine("Artist name: " + songToCreate.Creator.Name);
-                content.AppendLine("Song name: " + songToCreate.Name);
-                content.AppendLine("Song description: " + songToCreate.Description);
-                content.AppendLine("Label published on: " + songToCreate.Label);
-
-                foreach (var musicTubeUser in subscribedUsers)
-                {
-                    EmailMessage message = new EmailMessage()
-                    {
-                        Id = Guid.NewGuid(),
-                        MailTo = musicTubeUser.Email,
-                        Subject = "New song uploaded by " + songToCreate.Creator.Name + " " + songToCreate.Creator.Surname + " (" + songToCreate.Creator.ArtistName + ")",
-                        Status = false,
-                        Content = content.ToString()
-                    };
-
-                    emailRepository.Create(message);
-                } // send the mail to everyone subscribed
-            }
-
             songRepository.CreateSong(songToCreate);
             userRepository.UpdateUser(user);
 
-            await emailSender.DoWork();
+            await SendMail(songToCreate, "created");
 
             return songToCreate;
         }
@@ -174,31 +150,7 @@ namespace MusicTube.Service.Implementation
             }
 
             songRepository.UpdateSong(song);
-
-            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(song.CreatorId)).ToList();
-            if (subscribedUsers != null && subscribedUsers.Count != 0)
-            {
-                StringBuilder content = new StringBuilder();
-                content.AppendLine("Artist name: " + song.Creator.Name);
-                content.AppendLine("Song name: " + song.Name);
-                content.AppendLine("Song description: " + song.Description);
-                content.AppendLine("Label published on: " + song.Label);
-
-                foreach (var musicTubeUser in subscribedUsers)
-                {
-                    EmailMessage message = new EmailMessage()
-                    {
-                        Id = Guid.NewGuid(),
-                        MailTo = musicTubeUser.Email,
-                        Subject = "Song updated by " + song.Creator.Name + " " + song.Creator.Surname + " (" + song.Creator.ArtistName + ")",
-                        Status = false,
-                        Content = content.ToString()
-                    };
-
-                    emailRepository.Create(message);
-                } // send the mail to everyone subscribed
-            }
-            await emailSender.DoWork();
+            await SendMail(song, "updated");
 
             return song;
         }
@@ -211,31 +163,7 @@ namespace MusicTube.Service.Implementation
             string rootFolder = $"{Directory.GetCurrentDirectory()}\\wwwroot\\custom\\files\\audio";
             File.Delete(Path.Combine(rootFolder, songToDelete.AudioURL)); // delete the file with the song in it
 
-            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(songToDelete.CreatorId)).ToList();
-            if (subscribedUsers != null && subscribedUsers.Count != 0)
-            {
-                StringBuilder content = new StringBuilder();
-                content.AppendLine("Artist name: " + songToDelete.Creator.Name);
-                content.AppendLine("Song name: " + songToDelete.Name);
-                content.AppendLine("Song description: " + songToDelete.Description);
-                content.AppendLine("Label published on: " + songToDelete.Label);
-
-                foreach (var musicTubeUser in subscribedUsers)
-                {
-                    EmailMessage message = new EmailMessage()
-                    {
-                        Id = Guid.NewGuid(),
-                        MailTo = musicTubeUser.Email,
-                        Subject = "Song deleted by " + songToDelete.Creator.Name + " " + songToDelete.Creator.Surname + " (" + songToDelete.Creator.ArtistName + ")",
-                        Status = false,
-                        Content = content.ToString()
-                    };
-
-                    emailRepository.Create(message);
-                } // send the mail to everyone subscribed
-            }
-
-            await emailSender.DoWork();
+            await SendMail(songToDelete, "deleted");
 
             return songToDelete;
         }
@@ -388,9 +316,14 @@ namespace MusicTube.Service.Implementation
                     && z.ListenerId.Equals(user.Id)).SingleOrDefault();
             if (existingReview != null)
             {
-                existingReview.Summary = summary;
-                existingReview.Description = description;
-                existingReview.Rating = Int64.Parse(rating);
+                if(summary != null && !summary.Equals(""))
+                    existingReview.Summary = summary;
+
+                if(description != null && !description.Equals(""))
+                    existingReview.Description = description;
+
+                if(rating != null && !rating.Equals("") && !rating.Equals("0"))
+                    existingReview.Rating = Int64.Parse(rating);
 
                 reviewRepository.Update(existingReview);
             }
@@ -488,5 +421,38 @@ namespace MusicTube.Service.Implementation
         {
             return GetAllSongs().Where(z => z.CreatorId.Equals(artistId)).ToList();
         }
+    
+        
+        private async Task<bool> SendMail(Song song, String action)
+        {
+            List<MusicTubeUser> subscribedUsers = userRepository.GetAll().Where(z => z.NewsletterSubscribed && z.FavouriteArtistId != null && z.FavouriteArtistId.Equals(song.CreatorId)).ToList();
+            if (subscribedUsers != null && subscribedUsers.Count != 0)
+            {
+                StringBuilder content = new StringBuilder();
+                content.AppendLine("Artist name: " + song.Creator.Name);
+                content.AppendLine("Song name: " + song.Name);
+                content.AppendLine("Song description: " + song.Description);
+                content.AppendLine("Label published on: " + song.Label);
+
+                foreach (var musicTubeUser in subscribedUsers)
+                {
+                    EmailMessage message = new EmailMessage()
+                    {
+                        Id = Guid.NewGuid(),
+                        MailTo = musicTubeUser.Email,
+                        Subject = "Song " + action + " by " + song.Creator.Name + " " + song.Creator.Surname + " (" + song.Creator.ArtistName + ")",
+                        Status = false,
+                        Content = content.ToString()
+                    };
+
+                    emailRepository.Create(message);
+                } // send the mail to everyone subscribed
+            }
+
+            await emailSender.DoWork();
+
+            return true;
+        }
+
     }
 }
